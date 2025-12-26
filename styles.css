@@ -1342,16 +1342,17 @@ body::after {
     transform: translateY(-1px);
 }
 
-/* ===== Splitwise & Personal Status Styling ===== */
+/* ===== Splitwise & Personal Status Styling - Modern & Premium ===== */
 .splitwise-toggle-group.triple {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 6px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    margin-top: 8px;
+    gap: 10px;
+    background: rgba(20, 20, 40, 0.6);
+    padding: 8px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 10px;
+    backdrop-filter: blur(10px);
 }
 
 .split-toggle {
@@ -1364,53 +1365,50 @@ body::after {
 }
 
 .toggle-box {
-    padding: 10px 5px;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 12px;
+    padding: 12px 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
     text-align: center;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 4px;
     color: var(--text-secondary);
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.toggle-box .toggle-icon {
-    font-size: 18px;
-}
-
-/* Individual colors for each state when checked */
+/* Premium Gradient Active States */
 .split-toggle input:checked+.toggle-box.personal {
-    background: rgba(167, 139, 250, 0.15);
-    border-color: rgba(167, 139, 250, 0.4);
-    color: #a78bfa;
-    box-shadow: 0 4px 15px rgba(167, 139, 250, 0.15);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    transform: translateY(-2px);
 }
 
 .split-toggle input:checked+.toggle-box.pending {
-    background: rgba(251, 191, 36, 0.15);
-    border-color: rgba(251, 191, 36, 0.4);
-    color: #fbbf24;
-    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.15);
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 4px 15px rgba(253, 160, 133, 0.4);
+    transform: translateY(-2px);
 }
 
 .split-toggle input:checked+.toggle-box.added {
-    background: rgba(16, 185, 129, 0.15);
-    border-color: rgba(16, 185, 129, 0.4);
-    color: #10b981;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);
-}
-
-.split-toggle input:checked+.toggle-box .toggle-icon {
-    transform: scale(1.2);
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4);
+    transform: translateY(-2px);
 }
 
 .split-toggle:hover .toggle-box {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* List Badges */

@@ -419,11 +419,11 @@ function updateTransactionsList() {
 
         let splitBadge = '';
         if (transaction.splitStatus === 'split-pending') {
-            splitBadge = `<span class="split-badge badge-pending" onclick="toggleSplit(${transaction.id})" title="Click to mark as Added">⏳ To Split</span>`;
+            splitBadge = `<span class="split-badge badge-pending" onclick="toggleSplit(${transaction.id})" title="Click to mark as Added">To Split</span>`;
         } else if (transaction.splitStatus === 'split-added') {
-            splitBadge = `<span class="split-badge badge-added" onclick="toggleSplit(${transaction.id})" title="Click to mark as Personal">✅ Added</span>`;
+            splitBadge = `<span class="split-badge badge-added" onclick="toggleSplit(${transaction.id})" title="Click to mark as Personal">Added</span>`;
         } else {
-            splitBadge = `<span class="split-badge badge-personal" onclick="toggleSplit(${transaction.id})" title="Click to mark for Splitting">👤 Personal</span>`;
+            splitBadge = `<span class="split-badge badge-personal" onclick="toggleSplit(${transaction.id})" title="Click to mark for Splitting">Personal</span>`;
         }
 
         return `
