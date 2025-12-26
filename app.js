@@ -292,7 +292,20 @@ function handleFormSubmit(e) {
 
     transactions.unshift(transaction);
     saveTransactions();
-    updateUI();
+
+    // Auto-switch filter to show the new item (User Requested Feature)
+    // Execute Synchronously BEFORE form reset to guarantee UI state
+    if (splitStatus !== 'personal') {
+        console.log('🔄 Auto-switching to:', splitStatus);
+        window.setFilter(splitStatus); // This calls updateUI() internally
+    } else {
+        // For personal items, ensure we aren't stuck in a split view
+        if (splitFilter !== 'all' && splitFilter !== 'personal') {
+            window.setFilter('personal');
+        } else {
+            updateUI();
+        }
+    }
 
     // Reset form
     transactionForm.reset();
@@ -304,22 +317,6 @@ function handleFormSubmit(e) {
     if (personalRadio) personalRadio.checked = true;
 
     updateCategoryOptions(); // Ensure UI hides split toggle for new 'income' default
-
-    // Auto-switch filter to show the new item (User Requested Feature)
-    // Wrap in setTimeout to ensure it runs AFTER any form resets or UI updates
-    setTimeout(() => {
-        if (splitStatus !== 'personal') {
-            console.log('🔄 Auto-switching to:', splitStatus);
-            window.setFilter(splitStatus);
-        } else {
-            // For personal items, ensure we aren't stuck in a split view
-            if (splitFilter !== 'all' && splitFilter !== 'personal') {
-                window.setFilter('personal');
-            } else {
-                updateUI();
-            }
-        }
-    }, 50);
 
     showNotification(
         type === 'income'
