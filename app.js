@@ -305,21 +305,6 @@ function handleFormSubmit(e) {
 
     updateCategoryOptions(); // Ensure UI hides split toggle for new 'income' default
 
-    // Auto-switch filter to show the new item
-    // If user added a split/added item, switch to that view to verify it
-    if (splitStatus !== 'personal') {
-        window.setFilter(splitStatus);
-    } else {
-        // If it's a personal item, user might be in 'To Split' view and not see it
-        // Ideally we switch to 'All' or 'Personal'
-        if (splitFilter !== 'all' && splitFilter !== 'personal') {
-            window.setFilter('personal');
-        } else {
-            // Just update UI if we are already in a compatible view
-            updateUI();
-        }
-    }
-
     showNotification(
         type === 'income'
             ? `Income added: +$${amount.toFixed(2)} 💰`
