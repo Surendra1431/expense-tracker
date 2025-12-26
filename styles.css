@@ -203,6 +203,91 @@ body::after {
     }
 }
 
+/* ===== Real Lightning Bolts ===== */
+.lightning-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9996;
+    overflow: hidden;
+}
+
+.lightning-bolt {
+    position: absolute;
+    width: 150px;
+    height: 100%;
+    opacity: 0;
+    filter: drop-shadow(0 0 10px #ff4444) drop-shadow(0 0 20px #ff0000) drop-shadow(0 0 40px #cc0000);
+}
+
+.lightning-bolt path {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Position different bolts */
+.bolt-1 {
+    left: 15%;
+    animation: lightning-strike 8s 0s infinite;
+}
+
+.bolt-2 {
+    left: 75%;
+    width: 100px;
+    animation: lightning-strike 8s 0.1s infinite;
+}
+
+.bolt-3 {
+    left: 45%;
+    width: 120px;
+    animation: lightning-strike 12s 4s infinite;
+}
+
+@keyframes lightning-strike {
+
+    0%,
+    100% {
+        opacity: 0;
+    }
+
+    /* First strike */
+    20% {
+        opacity: 0;
+    }
+
+    20.1% {
+        opacity: 1;
+    }
+
+    20.2% {
+        opacity: 0.3;
+    }
+
+    20.3% {
+        opacity: 1;
+    }
+
+    20.5% {
+        opacity: 0;
+    }
+
+    /* Second strike */
+    21% {
+        opacity: 0;
+    }
+
+    21.1% {
+        opacity: 0.8;
+    }
+
+    21.3% {
+        opacity: 0;
+    }
+}
+
 /* Particles container */
 .particles {
     position: fixed;
@@ -255,6 +340,253 @@ body::after {
     box-shadow:
         0 0 10px #ff5555,
         0 0 20px #ff3333;
+}
+
+/* ===== Joyce Byers Christmas Lights ===== */
+.christmas-lights {
+    padding: 20px 0;
+    margin-bottom: 20px;
+    position: relative;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+.light-string {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 10px;
+    position: relative;
+}
+
+/* Wire connecting the lights */
+.light-string::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 5%;
+    right: 5%;
+    height: 2px;
+    background: #333;
+    z-index: 0;
+}
+
+.light {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 1;
+}
+
+/* The bulb */
+.light::before {
+    content: '';
+    width: 18px;
+    height: 24px;
+    border-radius: 50% 50% 45% 45%;
+    position: relative;
+    animation: flicker-light 3s ease-in-out infinite;
+}
+
+/* Letter underneath */
+.light span {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.6);
+    text-shadow: none;
+    transition: all 0.3s;
+}
+
+/* Light colors */
+.light.red::before {
+    background: #ff3333;
+    box-shadow: 0 0 8px #ff3333, 0 0 20px #ff0000, 0 0 30px #aa0000;
+}
+
+.light.yellow::before {
+    background: #ffcc00;
+    box-shadow: 0 0 8px #ffcc00, 0 0 20px #ff9900, 0 0 30px #cc6600;
+}
+
+.light.blue::before {
+    background: #3399ff;
+    box-shadow: 0 0 8px #3399ff, 0 0 20px #0066cc, 0 0 30px #003399;
+}
+
+.light.green::before {
+    background: #33cc33;
+    box-shadow: 0 0 8px #33cc33, 0 0 20px #00aa00, 0 0 30px #006600;
+}
+
+.light.purple::before {
+    background: #cc33ff;
+    box-shadow: 0 0 8px #cc33ff, 0 0 20px #9900cc, 0 0 30px #660099;
+}
+
+/* Random flickering for each light */
+.light:nth-child(1) {
+    animation: glow-pulse 4s 0.1s infinite;
+}
+
+.light:nth-child(2) {
+    animation: glow-pulse 5s 0.3s infinite;
+}
+
+.light:nth-child(3) {
+    animation: glow-pulse 3s 0.5s infinite;
+}
+
+.light:nth-child(4) {
+    animation: glow-pulse 6s 0.7s infinite;
+}
+
+.light:nth-child(5) {
+    animation: glow-pulse 4s 0.9s infinite;
+}
+
+.light:nth-child(6) {
+    animation: glow-pulse 5s 1.1s infinite;
+}
+
+.light:nth-child(7) {
+    animation: glow-pulse 3s 1.3s infinite;
+}
+
+.light:nth-child(8) {
+    animation: glow-pulse 6s 1.5s infinite;
+}
+
+.light:nth-child(9) {
+    animation: glow-pulse 4s 1.7s infinite;
+}
+
+.light:nth-child(10) {
+    animation: glow-pulse 5s 1.9s infinite;
+}
+
+.light:nth-child(11) {
+    animation: glow-pulse 3s 2.1s infinite;
+}
+
+.light:nth-child(12) {
+    animation: glow-pulse 6s 2.3s infinite;
+}
+
+.light:nth-child(13) {
+    animation: glow-pulse 4s 2.5s infinite;
+}
+
+.light:nth-child(14) {
+    animation: glow-pulse 5s 0.2s infinite;
+}
+
+.light:nth-child(15) {
+    animation: glow-pulse 3s 0.4s infinite;
+}
+
+.light:nth-child(16) {
+    animation: glow-pulse 6s 0.6s infinite;
+}
+
+.light:nth-child(17) {
+    animation: glow-pulse 4s 0.8s infinite;
+}
+
+.light:nth-child(18) {
+    animation: glow-pulse 5s 1.0s infinite;
+}
+
+.light:nth-child(19) {
+    animation: glow-pulse 3s 1.2s infinite;
+}
+
+.light:nth-child(20) {
+    animation: glow-pulse 6s 1.4s infinite;
+}
+
+.light:nth-child(21) {
+    animation: glow-pulse 4s 1.6s infinite;
+}
+
+.light:nth-child(22) {
+    animation: glow-pulse 5s 1.8s infinite;
+}
+
+.light:nth-child(23) {
+    animation: glow-pulse 3s 2.0s infinite;
+}
+
+.light:nth-child(24) {
+    animation: glow-pulse 6s 2.2s infinite;
+}
+
+.light:nth-child(25) {
+    animation: glow-pulse 4s 2.4s infinite;
+}
+
+.light:nth-child(26) {
+    animation: glow-pulse 5s 2.6s infinite;
+}
+
+@keyframes glow-pulse {
+
+    0%,
+    100% {
+        opacity: 0.4;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes flicker-light {
+
+    0%,
+    100% {
+        opacity: 0.7;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    20% {
+        opacity: 0.5;
+    }
+
+    30% {
+        opacity: 0.9;
+    }
+
+    40% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    60% {
+        opacity: 0.7;
+    }
+
+    70% {
+        opacity: 0.9;
+    }
+
+    80% {
+        opacity: 0.5;
+    }
+
+    90% {
+        opacity: 0.8;
+    }
 }
 
 .particle:nth-child(1) {
