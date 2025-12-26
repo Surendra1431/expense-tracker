@@ -473,52 +473,77 @@ function initializeCharts() {
         }
     });
 
-    // Comparison chart - Polar Area for more fun!
+    // Comparison chart - Clean Bar Chart
     const comparisonCtx = document.getElementById('comparison-chart').getContext('2d');
     comparisonChart = new Chart(comparisonCtx, {
-        type: 'polarArea',
+        type: 'bar',
         data: {
-            labels: ['💵 Total Income', '💸 Total Expenses'],
+            labels: ['Income', 'Expenses'],
             datasets: [{
                 data: [0, 0],
                 backgroundColor: [
-                    'rgba(0, 245, 160, 0.7)',
-                    'rgba(255, 107, 107, 0.7)'
+                    'rgba(16, 185, 129, 0.85)',
+                    'rgba(239, 68, 68, 0.85)'
                 ],
                 borderColor: [
-                    'rgba(0, 245, 160, 1)',
-                    'rgba(255, 107, 107, 1)'
+                    'rgba(16, 185, 129, 1)',
+                    'rgba(239, 68, 68, 1)'
                 ],
-                borderWidth: 3,
-                hoverBackgroundColor: [
-                    'rgba(0, 245, 160, 0.9)',
-                    'rgba(255, 107, 107, 0.9)'
-                ]
+                borderWidth: 2,
+                borderRadius: 12,
+                borderSkipped: false,
+                barThickness: 60
             }]
         },
         options: {
             ...chartOptions,
+            indexAxis: 'y',
             scales: {
-                r: {
-                    display: false
+                x: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        font: { size: 12 },
+                        callback: function (value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        font: {
+                            size: 14,
+                            weight: '600'
+                        }
+                    }
                 }
-            },
-            animation: {
-                ...chartOptions.animation,
-                duration: 1500,
-                easing: 'easeOutBounce'
             },
             plugins: {
                 ...chartOptions.plugins,
+                legend: {
+                    display: false
+                },
                 tooltip: {
                     ...chartOptions.plugins.tooltip,
                     callbacks: {
                         label: function (context) {
-                            const value = context.parsed.r || 0;
-                            return ` 💰 $${value.toFixed(2)}`;
+                            const value = context.parsed.x || 0;
+                            return ` $${value.toLocaleString()}`;
                         }
                     }
                 }
+            },
+            animation: {
+                duration: 1000,
+                easing: 'easeOutQuart'
             }
         }
     });
