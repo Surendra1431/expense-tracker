@@ -389,32 +389,36 @@ function initializeCharts() {
         }
     };
 
-    // VERY DISTINCT income colors - each completely different
+    // 🌈 CRAZY NEON INCOME COLORS - Super vibrant!
     const funIncomeColors = [
-        '#22C55E', // Green
-        '#3B82F6', // Blue
-        '#8B5CF6', // Purple
-        '#F59E0B', // Amber
-        '#06B6D4', // Cyan
-        '#EC4899', // Pink
-        '#84CC16', // Lime
-        '#6366F1', // Indigo
-        '#14B8A6', // Teal
-        '#F97316'  // Orange
+        '#00FF88', // Neon Green
+        '#00D4FF', // Electric Blue
+        '#FF00FF', // Magenta
+        '#FFD700', // Gold
+        '#00FFFF', // Cyan
+        '#FF69B4', // Hot Pink
+        '#7FFF00', // Chartreuse
+        '#9400D3', // Violet
+        '#FF6347', // Tomato
+        '#00FA9A', // Spring Green
+        '#FF1493', // Deep Pink
+        '#1E90FF'  // Dodger Blue
     ];
 
-    // VERY DISTINCT expense colors - each completely different
+    // 🔥 CRAZY NEON EXPENSE COLORS - Super vibrant!
     const funExpenseColors = [
-        '#EF4444', // Red
-        '#F97316', // Orange
-        '#FBBF24', // Yellow
-        '#A855F7', // Purple
-        '#EC4899', // Pink
-        '#3B82F6', // Blue
-        '#14B8A6', // Teal
-        '#84CC16', // Lime
-        '#6366F1', // Indigo
-        '#F43F5E'  // Rose
+        '#FF0040', // Neon Red
+        '#FF8C00', // Dark Orange
+        '#FFE135', // Banana Yellow
+        '#BF00FF', // Electric Purple
+        '#FF1493', // Deep Pink
+        '#00BFFF', // Deep Sky Blue
+        '#39FF14', // Neon Green
+        '#FF007F', // Rose
+        '#8A2BE2', // Blue Violet
+        '#FF4500', // Orange Red
+        '#DC143C', // Crimson
+        '#FF00FF'  // Fuchsia
     ];
 
     // Income pie chart
