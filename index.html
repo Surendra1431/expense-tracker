@@ -30,38 +30,6 @@
             <p class="tagline">Track your money with style ✨</p>
         </header>
 
-        <!-- Quick Stats Bar -->
-        <section class="quick-stats">
-            <div class="stat-item">
-                <span class="stat-icon">📅</span>
-                <div class="stat-info">
-                    <span class="stat-label">This Month</span>
-                    <span class="stat-value" id="month-expense">$0</span>
-                </div>
-            </div>
-            <div class="stat-item">
-                <span class="stat-icon">📊</span>
-                <div class="stat-info">
-                    <span class="stat-label">Daily Avg</span>
-                    <span class="stat-value" id="daily-avg">$0</span>
-                </div>
-            </div>
-            <div class="stat-item">
-                <span class="stat-icon">🔥</span>
-                <div class="stat-info">
-                    <span class="stat-label">Top Expense</span>
-                    <span class="stat-value" id="top-category">-</span>
-                </div>
-            </div>
-            <div class="stat-item">
-                <span class="stat-icon">📝</span>
-                <div class="stat-info">
-                    <span class="stat-label">Transactions</span>
-                    <span class="stat-value" id="total-transactions">0</span>
-                </div>
-            </div>
-        </section>
-
         <!-- Summary Cards -->
         <section class="summary-section">
             <div class="summary-card income-card">
@@ -244,27 +212,6 @@
                     <label for="import-file" class="action-btn import-btn">📤 Import</label>
                     <input type="file" id="import-file" accept=".json" style="display: none;">
                     <button id="clear-all" class="clear-btn">🗑️ Clear</button>
-                </div>
-            </div>
-
-            <!-- Search & Filters -->
-            <div class="filter-bar">
-                <div class="search-box">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" id="search-input" placeholder="Search transactions...">
-                </div>
-                <div class="filter-group">
-                    <select id="filter-type" class="filter-select">
-                        <option value="all">All Types</option>
-                        <option value="income">💵 Income</option>
-                        <option value="expense">💸 Expense</option>
-                    </select>
-                    <select id="filter-period" class="filter-select">
-                        <option value="all">All Time</option>
-                        <option value="today">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="month">This Month</option>
-                    </select>
                 </div>
             </div>
             <div class="transactions-list" id="transactions-list">

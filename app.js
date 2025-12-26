@@ -389,30 +389,30 @@ function initializeCharts() {
         }
     };
 
-    // Fun vibrant income colors with gradients effect
+    // Beautiful income colors - greens and teals
     const funIncomeColors = [
-        '#00F5A0', // Mint green
-        '#00D9F5', // Cyan
-        '#00FF88', // Bright green
-        '#7FFFD4', // Aquamarine
-        '#40E0D0', // Turquoise
-        '#00CED1', // Dark turquoise
-        '#48D1CC', // Medium turquoise
-        '#20B2AA'  // Light sea green
+        '#10B981', // Emerald
+        '#14B8A6', // Teal
+        '#06B6D4', // Cyan
+        '#22D3EE', // Light cyan
+        '#34D399', // Green
+        '#2DD4BF', // Teal light
+        '#5EEAD4', // Cyan light
+        '#67E8F9'  // Sky
     ];
 
-    // Fun vibrant expense colors
+    // Beautiful expense colors - reds, oranges, pinks
     const funExpenseColors = [
-        '#FF6B6B', // Coral red
-        '#FF8E53', // Orange
-        '#FE6B8B', // Pink
-        '#FF7043', // Deep orange
-        '#FF5252', // Red
-        '#FF4081', // Pink accent
-        '#F06292', // Light pink
-        '#EC407A', // Pink 400
-        '#AB47BC', // Purple
-        '#7C4DFF'  // Deep purple accent
+        '#EF4444', // Red
+        '#F97316', // Orange
+        '#FB923C', // Orange light
+        '#F43F5E', // Rose
+        '#EC4899', // Pink
+        '#D946EF', // Fuchsia
+        '#A855F7', // Purple
+        '#8B5CF6', // Violet
+        '#6366F1', // Indigo
+        '#F87171'  // Light red
     ];
 
     // Income pie chart
