@@ -6,6 +6,7 @@ let transactions = [];
 let incomeChart = null;
 let expenseChart = null;
 let comparisonChart = null;
+let timelineChart = null;
 
 // DOM Elements
 const transactionForm = document.getElementById('transaction-form');
@@ -598,6 +599,108 @@ function initializeCharts() {
             }
         }
     });
+
+    // Monthly Timeline Chart - Line chart
+    const timelineCtx = document.getElementById('timeline-chart').getContext('2d');
+    timelineChart = new Chart(timelineCtx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: 'Income',
+                    data: [],
+                    borderColor: '#22C55E',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#22C55E',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 8
+                },
+                {
+                    label: 'Expenses',
+                    data: [],
+                    borderColor: '#EF4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#EF4444',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 8
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            scales: {
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        font: { size: 12 }
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        font: { size: 12 },
+                        callback: function (value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        padding: 20,
+                        font: { size: 13, weight: '500' }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(15, 15, 20, 0.95)',
+                    titleFont: { size: 14, weight: '600' },
+                    bodyFont: { size: 13 },
+                    padding: 12,
+                    cornerRadius: 10,
+                    callbacks: {
+                        label: function (context) {
+                            return ` ${context.dataset.label}: $${context.parsed.y.toLocaleString()}`;
+                        }
+                    }
+                }
+            },
+            animation: {
+                duration: 1200,
+                easing: 'easeOutQuart'
+            }
+        }
+    });
 }
 
 // Update charts with current data
@@ -605,6 +708,7 @@ function updateCharts() {
     updateIncomeChart();
     updateExpenseChart();
     updateComparisonChart();
+    updateTimelineChart();
 }
 
 // Update income chart
@@ -675,6 +779,73 @@ function updateComparisonChart() {
 
     comparisonChart.data.datasets[0].data = [totalIncome, totalExpense];
     comparisonChart.update('active');
+}
+
+// Update timeline chart - Monthly breakdown
+function updateTimelineChart() {
+    const timelineEmpty = document.getElementById('timeline-empty');
+    const timelineCanvas = document.getElementById('timeline-chart');
+
+    if (transactions.length === 0) {
+        timelineEmpty.classList.add('show');
+        timelineCanvas.style.display = 'none';
+        return;
+    }
+
+    timelineEmpty.classList.remove('show');
+    timelineCanvas.style.display = 'block';
+
+    // Get the last 6 months of data
+    const monthlyData = getMonthlyData();
+
+    timelineChart.data.labels = monthlyData.labels;
+    timelineChart.data.datasets[0].data = monthlyData.income;
+    timelineChart.data.datasets[1].data = monthlyData.expenses;
+    timelineChart.update('active');
+}
+
+// Get monthly data for the past 6 months
+function getMonthlyData() {
+    const months = [];
+    const incomeData = [];
+    const expenseData = [];
+
+    const now = new Date();
+
+    // Get last 6 months
+    for (let i = 5; i >= 0; i--) {
+        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const monthName = date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+        months.push(monthName);
+
+        const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+        const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+        // Calculate income for this month
+        const monthIncome = transactions
+            .filter(t => {
+                const tDate = new Date(t.date);
+                return t.type === 'income' && tDate >= monthStart && tDate <= monthEnd;
+            })
+            .reduce((sum, t) => sum + t.amount, 0);
+
+        // Calculate expenses for this month
+        const monthExpense = transactions
+            .filter(t => {
+                const tDate = new Date(t.date);
+                return t.type === 'expense' && tDate >= monthStart && tDate <= monthEnd;
+            })
+            .reduce((sum, t) => sum + t.amount, 0);
+
+        incomeData.push(monthIncome);
+        expenseData.push(monthExpense);
+    }
+
+    return {
+        labels: months,
+        income: incomeData,
+        expenses: expenseData
+    };
 }
 
 // Get category data for charts

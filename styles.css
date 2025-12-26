@@ -803,6 +803,10 @@ body {
     justify-content: center;
 }
 
+.chart-wrapper.timeline-chart {
+    height: 300px;
+}
+
 .chart-wrapper canvas {
     max-width: 100%;
     max-height: 100%;
