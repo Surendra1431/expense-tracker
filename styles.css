@@ -317,94 +317,154 @@ body::after {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    gap: 15px;
     padding: 20px 30px;
     margin-bottom: 25px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+    background: linear-gradient(135deg, rgba(20, 20, 40, 0.9) 0%, rgba(30, 30, 50, 0.8) 100%);
     border-radius: var(--radius-lg);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    backdrop-filter: blur(15px);
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     flex-wrap: wrap;
 }
 
 .month-selector label {
     color: var(--text-primary);
     font-weight: 600;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .month-selector select {
-    padding: 12px 20px;
-    border-radius: var(--radius-md);
-    border: 2px solid rgba(102, 126, 234, 0.3);
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-    color: var(--text-primary);
+    padding: 14px 45px 14px 18px;
+    border-radius: 12px;
+    border: 2px solid rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+    color: white;
     font-size: 15px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23a78bfa' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 35px;
+    background-position: right 15px center;
+    min-width: 140px;
 }
 
 .month-selector select:hover {
-    border-color: rgba(102, 126, 234, 0.6);
-    background-color: rgba(102, 126, 234, 0.15);
+    border-color: rgba(167, 139, 250, 0.8);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.25) 0%, rgba(118, 75, 162, 0.25) 100%);
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+    transform: translateY(-1px);
 }
 
 .month-selector select:focus {
     outline: none;
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    border-color: #a78bfa;
+    box-shadow:
+        0 0 0 4px rgba(167, 139, 250, 0.2),
+        0 0 25px rgba(102, 126, 234, 0.4);
 }
 
 .month-selector select option {
-    background: #1a1a2e;
+    background: #1e1e3f;
     color: white;
-    padding: 10px;
+    padding: 12px;
+    font-weight: 500;
 }
 
 .apply-filter-btn {
-    padding: 12px 24px;
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
-    border-radius: var(--radius-md);
+    border-radius: 12px;
     color: white;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+        0 4px 15px rgba(102, 126, 234, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.apply-filter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.apply-filter-btn:hover::before {
+    left: 100%;
 }
 
 .apply-filter-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    transform: translateY(-3px);
+    box-shadow:
+        0 8px 25px rgba(102, 126, 234, 0.5),
+        0 0 40px rgba(102, 126, 234, 0.3);
+}
+
+.apply-filter-btn:active {
+    transform: translateY(-1px);
 }
 
 .clear-filter-btn {
-    padding: 12px 24px;
-    background: linear-gradient(135deg, var(--income-color), #059669);
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     border: none;
-    border-radius: var(--radius-md);
+    border-radius: 12px;
     color: white;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+        0 4px 15px rgba(16, 185, 129, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.clear-filter-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.clear-filter-btn:hover::before {
+    left: 100%;
 }
 
 .clear-filter-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    transform: translateY(-3px);
+    box-shadow:
+        0 8px 25px rgba(16, 185, 129, 0.5),
+        0 0 40px rgba(16, 185, 129, 0.3);
+}
+
+.clear-filter-btn:active {
+    transform: translateY(-1px);
 }
 
 /* Small spores - rising up */
