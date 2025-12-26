@@ -62,7 +62,14 @@ function setDefaultDate() {
 function setupEventListeners() {
     transactionForm.addEventListener('submit', handleFormSubmit);
     clearAllBtn.addEventListener('click', clearAllTransactions);
-    
+
+    // Export/Import buttons
+    const exportBtn = document.getElementById('export-data');
+    const importFile = document.getElementById('import-file');
+
+    exportBtn.addEventListener('click', exportData);
+    importFile.addEventListener('change', importData);
+
     // Emoji button clicks
     emojiGrid.querySelectorAll('.emoji-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -74,21 +81,103 @@ function setupEventListeners() {
     });
 }
 
+// Export data to JSON file
+function exportData() {
+    if (transactions.length === 0) {
+        showNotification('No data to export! Add some transactions first. 📋', 'info');
+        return;
+    }
+
+    const data = {
+        exportDate: new Date().toISOString(),
+        appVersion: '1.0',
+        transactions: transactions
+    };
+
+    const jsonString = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `finance-tracker-backup-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    showNotification(`Exported ${transactions.length} transactions! 📥`, 'success');
+}
+
+// Import data from JSON file
+function importData(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+        try {
+            const data = JSON.parse(event.target.result);
+
+            // Validate the data structure
+            if (!data.transactions || !Array.isArray(data.transactions)) {
+                throw new Error('Invalid file format');
+            }
+
+            // Ask user what to do with existing data
+            const hasExisting = transactions.length > 0;
+            let shouldMerge = false;
+
+            if (hasExisting) {
+                shouldMerge = confirm(
+                    `You have ${transactions.length} existing transactions.\n\n` +
+                    'Click OK to MERGE (add imported data to existing)\n' +
+                    'Click CANCEL to REPLACE (delete existing and use imported data)'
+                );
+            }
+
+            if (shouldMerge) {
+                // Merge: add imported transactions, avoiding duplicates by ID
+                const existingIds = new Set(transactions.map(t => t.id));
+                const newTransactions = data.transactions.filter(t => !existingIds.has(t.id));
+                transactions = [...transactions, ...newTransactions];
+                showNotification(`Merged ${newTransactions.length} new transactions! 📤`, 'success');
+            } else {
+                // Replace: use imported data
+                transactions = data.transactions;
+                showNotification(`Imported ${transactions.length} transactions! 📤`, 'success');
+            }
+
+            saveTransactions();
+            updateUI();
+
+        } catch (error) {
+            showNotification('Invalid file! Please use a valid backup file. ❌', 'error');
+            console.error('Import error:', error);
+        }
+    };
+
+    reader.readAsText(file);
+
+    // Reset file input so the same file can be selected again
+    e.target.value = '';
+}
+
 // Handle form submission
 function handleFormSubmit(e) {
     e.preventDefault();
-    
+
     const type = document.querySelector('input[name="type"]:checked').value;
     const description = descriptionInput.value.trim();
     const category = categorySelect.value;
     const amount = parseFloat(amountInput.value);
     const date = dateInput.value;
-    
+
     if (!description || !category || !amount || !date) {
         showNotification('Please fill in all fields! 📝', 'error');
         return;
     }
-    
+
     const transaction = {
         id: Date.now(),
         type,
@@ -97,19 +186,19 @@ function handleFormSubmit(e) {
         amount,
         date
     };
-    
+
     transactions.unshift(transaction);
     saveTransactions();
     updateUI();
-    
+
     // Reset form
     transactionForm.reset();
     setDefaultDate();
     document.getElementById('type-income').checked = true;
-    
+
     showNotification(
-        type === 'income' 
-            ? `Income added: +$${amount.toFixed(2)} 💰` 
+        type === 'income'
+            ? `Income added: +$${amount.toFixed(2)} 💰`
             : `Expense added: -$${amount.toFixed(2)} 💸`,
         'success'
     );
@@ -129,7 +218,7 @@ function clearAllTransactions() {
         showNotification('No transactions to clear! 📋', 'info');
         return;
     }
-    
+
     if (confirm('Are you sure you want to delete all transactions? This cannot be undone!')) {
         transactions = [];
         saveTransactions();
@@ -161,13 +250,13 @@ function updateSummary() {
     const income = transactions
         .filter(t => t.type === 'income')
         .reduce((sum, t) => sum + t.amount, 0);
-    
+
     const expense = transactions
         .filter(t => t.type === 'expense')
         .reduce((sum, t) => sum + t.amount, 0);
-    
+
     const balance = income - expense;
-    
+
     // Animate the values
     animateValue(totalIncomeEl, income);
     animateValue(totalExpenseEl, expense);
@@ -178,10 +267,10 @@ function updateSummary() {
 function animateValue(element, value, showSign = false) {
     const prefix = showSign && value >= 0 ? '+' : '';
     const color = showSign ? (value >= 0 ? '#38ef7d' : '#f45c43') : null;
-    
+
     element.textContent = `${prefix}$${value.toFixed(2)}`;
     if (color) element.style.color = color;
-    
+
     // Add a quick pulse animation
     element.style.transform = 'scale(1.05)';
     setTimeout(() => {
@@ -200,7 +289,7 @@ function updateTransactionsList() {
         `;
         return;
     }
-    
+
     const html = transactions.map(transaction => {
         const emoji = transaction.category.split(' ')[0] || '💰';
         const sign = transaction.type === 'income' ? '+' : '-';
@@ -209,7 +298,7 @@ function updateTransactionsList() {
             day: 'numeric',
             year: 'numeric'
         });
-        
+
         return `
             <div class="transaction-item ${transaction.type}" data-id="${transaction.id}">
                 <div class="transaction-icon">${emoji}</div>
@@ -226,7 +315,7 @@ function updateTransactionsList() {
             </div>
         `;
     }).join('');
-    
+
     transactionsList.innerHTML = html;
 }
 
@@ -237,46 +326,90 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Initialize charts
+// Initialize charts with fun animations
 function initializeCharts() {
     const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,
+        animation: {
+            animateRotate: true,
+            animateScale: true,
+            duration: 1000,
+            easing: 'easeOutBounce'
+        },
         plugins: {
             legend: {
                 position: 'bottom',
                 labels: {
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    padding: 16,
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    padding: 20,
                     font: {
-                        size: 12,
-                        family: "'Inter', sans-serif"
+                        size: 13,
+                        family: "'Inter', sans-serif",
+                        weight: '500'
                     },
                     usePointStyle: true,
-                    pointStyle: 'circle'
+                    pointStyle: 'rectRounded'
                 }
             },
             tooltip: {
                 backgroundColor: 'rgba(18, 18, 26, 0.95)',
                 titleColor: '#fff',
-                bodyColor: 'rgba(255, 255, 255, 0.8)',
-                borderColor: 'rgba(255, 255, 255, 0.1)',
-                borderWidth: 1,
-                cornerRadius: 12,
-                padding: 12,
+                titleFont: {
+                    size: 14,
+                    weight: 'bold'
+                },
+                bodyColor: 'rgba(255, 255, 255, 0.9)',
+                bodyFont: {
+                    size: 13
+                },
+                borderColor: 'rgba(102, 126, 234, 0.5)',
+                borderWidth: 2,
+                cornerRadius: 16,
+                padding: 16,
                 displayColors: true,
+                boxPadding: 8,
                 callbacks: {
-                    label: function(context) {
+                    label: function (context) {
                         const value = context.parsed || 0;
                         const total = context.dataset.data.reduce((a, b) => a + b, 0);
                         const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                        return ` $${value.toFixed(2)} (${percentage}%)`;
+                        return ` 💵 $${value.toFixed(2)} (${percentage}%)`;
                     }
                 }
             }
+        },
+        onHover: (event, elements) => {
+            event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
         }
     };
-    
+
+    // Fun vibrant income colors with gradients effect
+    const funIncomeColors = [
+        '#00F5A0', // Mint green
+        '#00D9F5', // Cyan
+        '#00FF88', // Bright green
+        '#7FFFD4', // Aquamarine
+        '#40E0D0', // Turquoise
+        '#00CED1', // Dark turquoise
+        '#48D1CC', // Medium turquoise
+        '#20B2AA'  // Light sea green
+    ];
+
+    // Fun vibrant expense colors
+    const funExpenseColors = [
+        '#FF6B6B', // Coral red
+        '#FF8E53', // Orange
+        '#FE6B8B', // Pink
+        '#FF7043', // Deep orange
+        '#FF5252', // Red
+        '#FF4081', // Pink accent
+        '#F06292', // Light pink
+        '#EC407A', // Pink 400
+        '#AB47BC', // Purple
+        '#7C4DFF'  // Deep purple accent
+    ];
+
     // Income pie chart
     const incomeCtx = document.getElementById('income-chart').getContext('2d');
     incomeChart = new Chart(incomeCtx, {
@@ -285,18 +418,27 @@ function initializeCharts() {
             labels: [],
             datasets: [{
                 data: [],
-                backgroundColor: incomeColors,
-                borderColor: 'rgba(10, 10, 15, 0.8)',
-                borderWidth: 3,
-                hoverOffset: 10
+                backgroundColor: funIncomeColors,
+                borderColor: 'rgba(10, 10, 15, 0.9)',
+                borderWidth: 4,
+                hoverOffset: 20,
+                hoverBorderWidth: 6,
+                hoverBorderColor: '#fff'
             }]
         },
         options: {
             ...chartOptions,
-            cutout: '60%'
+            cutout: '55%',
+            rotation: -90,
+            circumference: 360,
+            animation: {
+                ...chartOptions.animation,
+                duration: 1200,
+                easing: 'easeOutElastic'
+            }
         }
     });
-    
+
     // Expense pie chart
     const expenseCtx = document.getElementById('expense-chart').getContext('2d');
     expenseChart = new Chart(expenseCtx, {
@@ -305,45 +447,70 @@ function initializeCharts() {
             labels: [],
             datasets: [{
                 data: [],
-                backgroundColor: expenseColors,
-                borderColor: 'rgba(10, 10, 15, 0.8)',
-                borderWidth: 3,
-                hoverOffset: 10
+                backgroundColor: funExpenseColors,
+                borderColor: 'rgba(10, 10, 15, 0.9)',
+                borderWidth: 4,
+                hoverOffset: 20,
+                hoverBorderWidth: 6,
+                hoverBorderColor: '#fff'
             }]
         },
         options: {
             ...chartOptions,
-            cutout: '60%'
+            cutout: '55%',
+            rotation: 90,
+            circumference: 360,
+            animation: {
+                ...chartOptions.animation,
+                duration: 1200,
+                easing: 'easeOutElastic'
+            }
         }
     });
-    
-    // Comparison chart
+
+    // Comparison chart - Polar Area for more fun!
     const comparisonCtx = document.getElementById('comparison-chart').getContext('2d');
     comparisonChart = new Chart(comparisonCtx, {
-        type: 'pie',
+        type: 'polarArea',
         data: {
             labels: ['💵 Total Income', '💸 Total Expenses'],
             datasets: [{
                 data: [0, 0],
                 backgroundColor: [
-                    'rgba(56, 239, 125, 0.8)',
-                    'rgba(244, 92, 67, 0.8)'
+                    'rgba(0, 245, 160, 0.7)',
+                    'rgba(255, 107, 107, 0.7)'
                 ],
-                borderColor: 'rgba(10, 10, 15, 0.8)',
+                borderColor: [
+                    'rgba(0, 245, 160, 1)',
+                    'rgba(255, 107, 107, 1)'
+                ],
                 borderWidth: 3,
-                hoverOffset: 15
+                hoverBackgroundColor: [
+                    'rgba(0, 245, 160, 0.9)',
+                    'rgba(255, 107, 107, 0.9)'
+                ]
             }]
         },
         options: {
             ...chartOptions,
+            scales: {
+                r: {
+                    display: false
+                }
+            },
+            animation: {
+                ...chartOptions.animation,
+                duration: 1500,
+                easing: 'easeOutBounce'
+            },
             plugins: {
                 ...chartOptions.plugins,
                 tooltip: {
                     ...chartOptions.plugins.tooltip,
                     callbacks: {
-                        label: function(context) {
-                            const value = context.parsed || 0;
-                            return ` $${value.toFixed(2)}`;
+                        label: function (context) {
+                            const value = context.parsed.r || 0;
+                            return ` 💰 $${value.toFixed(2)}`;
                         }
                     }
                 }
@@ -364,18 +531,18 @@ function updateIncomeChart() {
     const incomeTransactions = transactions.filter(t => t.type === 'income');
     const incomeEmpty = document.getElementById('income-empty');
     const incomeCanvas = document.getElementById('income-chart');
-    
+
     if (incomeTransactions.length === 0) {
         incomeEmpty.classList.add('show');
         incomeCanvas.style.display = 'none';
         return;
     }
-    
+
     incomeEmpty.classList.remove('show');
     incomeCanvas.style.display = 'block';
-    
+
     const categoryData = getCategoryData(incomeTransactions);
-    
+
     incomeChart.data.labels = categoryData.labels;
     incomeChart.data.datasets[0].data = categoryData.values;
     incomeChart.update('active');
@@ -386,18 +553,18 @@ function updateExpenseChart() {
     const expenseTransactions = transactions.filter(t => t.type === 'expense');
     const expenseEmpty = document.getElementById('expense-empty');
     const expenseCanvas = document.getElementById('expense-chart');
-    
+
     if (expenseTransactions.length === 0) {
         expenseEmpty.classList.add('show');
         expenseCanvas.style.display = 'none';
         return;
     }
-    
+
     expenseEmpty.classList.remove('show');
     expenseCanvas.style.display = 'block';
-    
+
     const categoryData = getCategoryData(expenseTransactions);
-    
+
     expenseChart.data.labels = categoryData.labels;
     expenseChart.data.datasets[0].data = categoryData.values;
     expenseChart.update('active');
@@ -408,23 +575,23 @@ function updateComparisonChart() {
     const totalIncome = transactions
         .filter(t => t.type === 'income')
         .reduce((sum, t) => sum + t.amount, 0);
-    
+
     const totalExpense = transactions
         .filter(t => t.type === 'expense')
         .reduce((sum, t) => sum + t.amount, 0);
-    
+
     const comparisonEmpty = document.getElementById('comparison-empty');
     const comparisonCanvas = document.getElementById('comparison-chart');
-    
+
     if (totalIncome === 0 && totalExpense === 0) {
         comparisonEmpty.classList.add('show');
         comparisonCanvas.style.display = 'none';
         return;
     }
-    
+
     comparisonEmpty.classList.remove('show');
     comparisonCanvas.style.display = 'block';
-    
+
     comparisonChart.data.datasets[0].data = [totalIncome, totalExpense];
     comparisonChart.update('active');
 }
@@ -432,16 +599,16 @@ function updateComparisonChart() {
 // Get category data for charts
 function getCategoryData(transactions) {
     const categoryMap = new Map();
-    
+
     transactions.forEach(t => {
         const current = categoryMap.get(t.category) || 0;
         categoryMap.set(t.category, current + t.amount);
     });
-    
+
     // Sort by value descending
     const sorted = Array.from(categoryMap.entries())
         .sort((a, b) => b[1] - a[1]);
-    
+
     return {
         labels: sorted.map(([label]) => label),
         values: sorted.map(([, value]) => value)
@@ -453,11 +620,11 @@ function showNotification(message, type = 'info') {
     // Remove existing notification if any
     const existing = document.querySelector('.notification');
     if (existing) existing.remove();
-    
+
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.innerHTML = message;
-    
+
     // Add styles
     Object.assign(notification.style, {
         position: 'fixed',
@@ -474,16 +641,16 @@ function showNotification(message, type = 'info') {
         border: '1px solid rgba(255, 255, 255, 0.1)',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
     });
-    
+
     // Type-specific colors
     const colors = {
         success: 'rgba(17, 153, 142, 0.9)',
         error: 'rgba(235, 51, 73, 0.9)',
         info: 'rgba(102, 126, 234, 0.9)'
     };
-    
+
     notification.style.background = colors[type] || colors.info;
-    
+
     // Add animation keyframes if not exists
     if (!document.querySelector('#notification-styles')) {
         const style = document.createElement('style');
@@ -512,9 +679,9 @@ function showNotification(message, type = 'info') {
         `;
         document.head.appendChild(style);
     }
-    
+
     document.body.appendChild(notification);
-    
+
     // Remove after 3 seconds
     setTimeout(() => {
         notification.style.animation = 'slideOutRight 0.3s ease forwards';

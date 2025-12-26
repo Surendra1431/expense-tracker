@@ -4,29 +4,29 @@
     --income-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
     --expense-gradient: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
     --balance-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    
+
     --bg-primary: #0a0a0f;
     --bg-secondary: #12121a;
     --bg-card: rgba(255, 255, 255, 0.03);
     --bg-card-hover: rgba(255, 255, 255, 0.06);
-    
+
     --text-primary: #ffffff;
     --text-secondary: rgba(255, 255, 255, 0.7);
     --text-muted: rgba(255, 255, 255, 0.4);
-    
+
     --border-color: rgba(255, 255, 255, 0.08);
     --border-glow: rgba(102, 126, 234, 0.5);
-    
+
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 16px 64px rgba(0, 0, 0, 0.5);
     --shadow-glow: 0 0 40px rgba(102, 126, 234, 0.3);
-    
+
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 20px;
     --radius-xl: 28px;
-    
+
     --transition-fast: 0.15s ease;
     --transition-normal: 0.3s ease;
     --transition-slow: 0.5s ease;
@@ -100,10 +100,23 @@ body {
 }
 
 @keyframes float {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    25% { transform: translate(30px, -30px) scale(1.05); }
-    50% { transform: translate(-20px, 20px) scale(0.95); }
-    75% { transform: translate(-30px, -20px) scale(1.02); }
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    25% {
+        transform: translate(30px, -30px) scale(1.05);
+    }
+
+    50% {
+        transform: translate(-20px, 20px) scale(0.95);
+    }
+
+    75% {
+        transform: translate(-30px, -20px) scale(1.02);
+    }
 }
 
 /* ===== App Container ===== */
@@ -152,8 +165,15 @@ body {
 }
 
 @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
 }
 
 @keyframes fadeInDown {
@@ -161,6 +181,7 @@ body {
         opacity: 0;
         transform: translateY(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -190,9 +211,17 @@ body {
     animation: fadeInUp 0.6s ease backwards;
 }
 
-.summary-card:nth-child(1) { animation-delay: 0.1s; }
-.summary-card:nth-child(2) { animation-delay: 0.2s; }
-.summary-card:nth-child(3) { animation-delay: 0.3s; }
+.summary-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.summary-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.summary-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
 
 .summary-card:hover {
     transform: translateY(-4px);
@@ -211,9 +240,17 @@ body {
     background: rgba(255, 255, 255, 0.05);
 }
 
-.income-card .card-icon { background: rgba(17, 153, 142, 0.2); }
-.expense-card .card-icon { background: rgba(235, 51, 73, 0.2); }
-.balance-card .card-icon { background: rgba(79, 172, 254, 0.2); }
+.income-card .card-icon {
+    background: rgba(17, 153, 142, 0.2);
+}
+
+.expense-card .card-icon {
+    background: rgba(235, 51, 73, 0.2);
+}
+
+.balance-card .card-icon {
+    background: rgba(79, 172, 254, 0.2);
+}
 
 .card-content {
     display: flex;
@@ -235,9 +272,17 @@ body {
     letter-spacing: -1px;
 }
 
-.income-card .card-value { color: #38ef7d; }
-.expense-card .card-value { color: #f45c43; }
-.balance-card .card-value { color: #4facfe; }
+.income-card .card-value {
+    color: #38ef7d;
+}
+
+.expense-card .card-value {
+    color: #f45c43;
+}
+
+.balance-card .card-value {
+    color: #4facfe;
+}
 
 .card-glow {
     position: absolute;
@@ -250,15 +295,24 @@ body {
     right: -100px;
 }
 
-.income-card .card-glow { background: var(--income-gradient); }
-.expense-card .card-glow { background: var(--expense-gradient); }
-.balance-card .card-glow { background: var(--balance-gradient); }
+.income-card .card-glow {
+    background: var(--income-gradient);
+}
+
+.expense-card .card-glow {
+    background: var(--expense-gradient);
+}
+
+.balance-card .card-glow {
+    background: var(--balance-gradient);
+}
 
 @keyframes fadeInUp {
     from {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -375,13 +429,13 @@ body {
     background: rgba(255, 255, 255, 0.08);
 }
 
-.type-toggle input[type="radio"]:checked + .income-toggle {
+.type-toggle input[type="radio"]:checked+.income-toggle {
     background: rgba(17, 153, 142, 0.2);
     border-color: #38ef7d;
     color: #38ef7d;
 }
 
-.type-toggle input[type="radio"]:checked + .expense-toggle {
+.type-toggle input[type="radio"]:checked+.expense-toggle {
     background: rgba(235, 51, 73, 0.2);
     border-color: #f45c43;
     color: #f45c43;
@@ -573,6 +627,50 @@ body {
     transform: translateY(-2px);
 }
 
+/* Header Actions */
+.header-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.export-btn {
+    background: rgba(17, 153, 142, 0.15);
+    border: 1px solid rgba(17, 153, 142, 0.3);
+    color: #38ef7d;
+}
+
+.export-btn:hover {
+    background: rgba(17, 153, 142, 0.25);
+    border-color: #38ef7d;
+    transform: translateY(-2px);
+}
+
+.import-btn {
+    background: rgba(79, 172, 254, 0.15);
+    border: 1px solid rgba(79, 172, 254, 0.3);
+    color: #4facfe;
+}
+
+.import-btn:hover {
+    background: rgba(79, 172, 254, 0.25);
+    border-color: #4facfe;
+    transform: translateY(-2px);
+}
+
 .transactions-list {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -642,6 +740,7 @@ body {
         opacity: 0;
         transform: translateX(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -740,27 +839,27 @@ body {
     .app-container {
         padding: 24px 16px;
     }
-    
+
     .logo h1 {
         font-size: 28px;
     }
-    
+
     .logo-icon {
         font-size: 36px;
     }
-    
+
     .summary-card {
         padding: 20px;
     }
-    
+
     .card-value {
         font-size: 24px;
     }
-    
+
     .form-section {
         padding: 24px;
     }
-    
+
     .chart-wrapper {
         height: 220px;
     }
