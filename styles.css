@@ -528,7 +528,7 @@ body::after {
 
 /* Add padding to body for fixed header */
 body {
-    padding-top: 180px;
+    padding-top: 100px;
 }
 
 .light-string {
