@@ -84,6 +84,55 @@ function setupEventListeners() {
             descriptionInput.focus();
         });
     });
+
+    // Dynamic category based on transaction type
+    const typeRadios = document.querySelectorAll('input[name="type"]');
+    typeRadios.forEach(radio => {
+        radio.addEventListener('change', updateCategoryOptions);
+    });
+
+    // Initialize with default (income)
+    updateCategoryOptions();
+}
+
+// Income categories
+const incomeCategories = [
+    { value: '💼 Salary', label: '💼 Salary' },
+    { value: '💰 Freelance', label: '💰 Freelance' },
+    { value: '📈 Investment', label: '📈 Investment' },
+    { value: '🎁 Gift', label: '🎁 Gift' },
+    { value: '🏦 Interest', label: '🏦 Interest' },
+    { value: '💵 Other Income', label: '💵 Other Income' }
+];
+
+// Expense categories
+const expenseCategories = [
+    { value: '🍔 Food & Dining', label: '🍔 Food & Dining' },
+    { value: '🚗 Transportation', label: '🚗 Transportation' },
+    { value: '🏠 Housing', label: '🏠 Housing' },
+    { value: '🛒 Shopping', label: '🛒 Shopping' },
+    { value: '🎬 Entertainment', label: '🎬 Entertainment' },
+    { value: '💊 Healthcare', label: '💊 Healthcare' },
+    { value: '📚 Education', label: '📚 Education' },
+    { value: '✈️ Travel', label: '✈️ Travel' },
+    { value: '💡 Utilities', label: '💡 Utilities' },
+    { value: '💳 Other Expense', label: '💳 Other Expense' }
+];
+
+// Update category dropdown based on selected type
+function updateCategoryOptions() {
+    const selectedType = document.querySelector('input[name="type"]:checked').value;
+    const categories = selectedType === 'income' ? incomeCategories : expenseCategories;
+
+    // Clear and rebuild dropdown
+    categorySelect.innerHTML = '<option value="">Select a category...</option>';
+
+    categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.value;
+        option.textContent = cat.label;
+        categorySelect.appendChild(option);
+    });
 }
 
 // Export data to JSON file
@@ -421,31 +470,27 @@ function initializeCharts() {
         '#FF00FF'  // Fuchsia
     ];
 
-    // Income pie chart
+    // Income chart - PIE style (solid center)
     const incomeCtx = document.getElementById('income-chart').getContext('2d');
     incomeChart = new Chart(incomeCtx, {
-        type: 'doughnut',
+        type: 'pie',
         data: {
             labels: [],
             datasets: [{
                 data: [],
                 backgroundColor: funIncomeColors,
-                borderColor: 'rgba(10, 10, 15, 0.9)',
-                borderWidth: 4,
-                hoverOffset: 20,
-                hoverBorderWidth: 6,
+                borderColor: 'rgba(255, 255, 255, 0.3)',
+                borderWidth: 2,
+                hoverOffset: 25,
+                hoverBorderWidth: 3,
                 hoverBorderColor: '#fff'
             }]
         },
         options: {
             ...chartOptions,
-            cutout: '55%',
-            rotation: -90,
-            circumference: 360,
             animation: {
-                ...chartOptions.animation,
-                duration: 1200,
-                easing: 'easeOutElastic'
+                duration: 1000,
+                easing: 'easeOutQuart'
             }
         }
     });
