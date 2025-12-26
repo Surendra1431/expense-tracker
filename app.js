@@ -416,16 +416,20 @@ function updateTransactionsList() {
     let filteredTx = getFilteredTransactions();
 
     // Secondary filter: Splitwise status
-    if (splitFilter === 'splitwise') {
-        filteredTx = filteredTx.filter(t => t.splitStatus === 'split-pending' || t.splitStatus === 'split-added');
+    if (splitFilter === 'split-pending') {
+        filteredTx = filteredTx.filter(t => t.splitStatus === 'split-pending');
+    } else if (splitFilter === 'split-added') {
+        filteredTx = filteredTx.filter(t => t.splitStatus === 'split-added');
     } else if (splitFilter === 'personal') {
         filteredTx = filteredTx.filter(t => !t.splitStatus || t.splitStatus === 'personal');
     }
 
     if (filteredTx.length === 0) {
         let message = 'No transactions found! 🔍';
-        if (splitFilter === 'splitwise') {
-            message = 'No Splitwise items found for this period 👥';
+        if (splitFilter === 'split-pending') {
+            message = 'No items to split! You are all caught up 🤝';
+        } else if (splitFilter === 'split-added') {
+            message = 'No added splitwise items found 📉';
         } else if (splitFilter === 'personal') {
             message = 'No Personal items found for this period 👤';
         } else if (!selectedMonth) {
