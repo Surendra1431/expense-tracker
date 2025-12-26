@@ -244,8 +244,7 @@ function handleFormSubmit(e) {
     const amount = parseFloat(amountInput.value);
     const date = dateInput.value;
 
-    const splitType = document.querySelector('input[name="split-type"]:checked').value;
-    const isSplitwise = splitType === 'splitwise';
+    const splitStatus = document.querySelector('input[name="split-type"]:checked').value;
 
     if (!description || !category || !amount || !date) {
         showNotification('Please fill in all fields! 📝', 'error');
@@ -259,7 +258,7 @@ function handleFormSubmit(e) {
         category,
         amount,
         date,
-        isSplitwise
+        splitStatus
     };
 
     transactions.unshift(transaction);
@@ -293,11 +292,20 @@ function deleteTransaction(id) {
 function toggleSplit(id) {
     const tx = transactions.find(t => t.id === id);
     if (tx) {
-        tx.isSplitwise = !tx.isSplitwise;
+        // Cycle: personal -> split-pending -> split-added -> personal
+        if (!tx.splitStatus || tx.splitStatus === 'personal') {
+            tx.splitStatus = 'split-pending';
+            showNotification('To be Split ⏳', 'success');
+        } else if (tx.splitStatus === 'split-pending') {
+            tx.splitStatus = 'split-added';
+            showNotification('Added to Splitwise ✅', 'success');
+        } else {
+            tx.splitStatus = 'personal';
+            showNotification('Marked as Personal 👤', 'info');
+        }
+
         saveTransactions();
         updateUI();
-        const msg = tx.isSplitwise ? 'Marked as Splitwise 👥' : 'Marked as Personal 👤';
-        showNotification(msg, 'success');
     }
 }
 
@@ -376,9 +384,9 @@ function updateTransactionsList() {
 
     // Secondary filter: Splitwise status
     if (splitFilter === 'splitwise') {
-        filteredTx = filteredTx.filter(t => t.isSplitwise);
+        filteredTx = filteredTx.filter(t => t.splitStatus === 'split-pending' || t.splitStatus === 'split-added');
     } else if (splitFilter === 'personal') {
-        filteredTx = filteredTx.filter(t => !t.isSplitwise);
+        filteredTx = filteredTx.filter(t => !t.splitStatus || t.splitStatus === 'personal');
     }
 
     if (filteredTx.length === 0) {
@@ -409,9 +417,14 @@ function updateTransactionsList() {
             year: 'numeric'
         });
 
-        const splitBadge = transaction.isSplitwise
-            ? `<span class="split-badge badge-split" onclick="toggleSplit(${transaction.id})" title="Click to mark as Personal">👥 Splitwise</span>`
-            : `<span class="split-badge badge-personal" onclick="toggleSplit(${transaction.id})" title="Click to mark as Splitwise">👤 Personal</span>`;
+        let splitBadge = '';
+        if (transaction.splitStatus === 'split-pending') {
+            splitBadge = `<span class="split-badge badge-pending" onclick="toggleSplit(${transaction.id})" title="Click to mark as Added">⏳ To Split</span>`;
+        } else if (transaction.splitStatus === 'split-added') {
+            splitBadge = `<span class="split-badge badge-added" onclick="toggleSplit(${transaction.id})" title="Click to mark as Personal">✅ Added</span>`;
+        } else {
+            splitBadge = `<span class="split-badge badge-personal" onclick="toggleSplit(${transaction.id})" title="Click to mark for Splitting">👤 Personal</span>`;
+        }
 
         return `
             <div class="transaction-item ${transaction.type}" data-id="${transaction.id}">
@@ -1778,14 +1791,14 @@ function updateInsights() {
     if (countEl) countEl.textContent = filteredTx.length;
 
     // Count personal expenses that might need splitting
-    const pendingSplit = filteredTx.filter(t => t.type === 'expense' && !t.isSplitwise).length;
+    const pendingSplitCount = filteredTx.filter(t => t.type === 'expense' && t.splitStatus === 'split-pending').length;
 
     // Smart tip
     if (tipEl) {
         if (filteredTx.length === 0) {
             tipEl.textContent = '💡 Add your income and expenses to see insights!';
-        } else if (pendingSplit > 0 && splitFilter !== 'splitwise') {
-            tipEl.textContent = `💡 You have ${pendingSplit} personal expenses. Don't forget to add shared items to Splitwise! 👥`;
+        } else if (pendingSplitCount > 0) {
+            tipEl.textContent = `💡 You have ${pendingSplitCount} expenses waiting to be split. Don't forget to add them to Splitwise! 👥`;
         } else if (savings < 0) {
             tipEl.textContent = `⚠️ You're spending more than you earn! Try to cut back on ${topCategory}`;
         } else if (savingsRate >= 30) {

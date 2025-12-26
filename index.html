@@ -161,22 +161,29 @@
                         <input type="number" id="amount" placeholder="0.00" step="0.01" min="0.01" required>
                     </div>
 
-                    <!-- Expense Type Selector (Personal vs Splitwise) -->
+                    <!-- Expense Tracking Selector (Personal vs Splitwise Status) -->
                     <div class="form-group">
-                        <label>Expense Category</label>
-                        <div class="splitwise-toggle-group">
+                        <label>Split Status</label>
+                        <div class="splitwise-toggle-group triple">
                             <label class="split-toggle">
                                 <input type="radio" name="split-type" value="personal" checked>
-                                <div class="toggle-box">
+                                <div class="toggle-box personal">
                                     <span class="toggle-icon">👤</span>
                                     <span>Personal</span>
                                 </div>
                             </label>
                             <label class="split-toggle">
-                                <input type="radio" name="split-type" value="splitwise">
-                                <div class="toggle-box">
-                                    <span class="toggle-icon">👥</span>
-                                    <span>Splitwise</span>
+                                <input type="radio" name="split-type" value="split-pending">
+                                <div class="toggle-box pending">
+                                    <span class="toggle-icon">⏳</span>
+                                    <span>To Split</span>
+                                </div>
+                            </label>
+                            <label class="split-toggle">
+                                <input type="radio" name="split-type" value="split-added">
+                                <div class="toggle-box added">
+                                    <span class="toggle-icon">✅</span>
+                                    <span>Added</span>
                                 </div>
                             </label>
                         </div>

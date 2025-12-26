@@ -1342,59 +1342,20 @@ body::after {
     transform: translateY(-1px);
 }
 
-/* ===== Splitwise Badge & Toggle ===== */
-.split-badge {
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 8px;
-    margin-left: 10px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    border: 1px solid transparent;
-}
-
-.split-badge:hover {
-    transform: scale(1.05);
-    filter: brightness(1.2);
-}
-
-.badge-split {
-    background: rgba(16, 185, 129, 0.15);
-    color: #10b981;
-    border-color: rgba(16, 185, 129, 0.3);
-}
-
-.badge-personal {
-    background: rgba(102, 126, 234, 0.15);
-    color: #a78bfa;
-    border-color: rgba(102, 126, 234, 0.3);
-}
-
-.badge-personal:hover::after {
-    content: " (Click to Split)";
-    font-size: 9px;
-    opacity: 0.8;
-}
-
-.badge-split:hover::after {
-    content: " (Added! 🎉)";
-    font-size: 9px;
-    opacity: 0.8;
-}
-
-/* ===== Splitwise Segmented Toggle ===== */
-.splitwise-toggle-group {
+/* ===== Splitwise & Personal Status Styling ===== */
+.splitwise-toggle-group.triple {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 6px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
     margin-top: 8px;
 }
 
 .split-toggle {
+    position: relative;
     cursor: pointer;
 }
 
@@ -1403,33 +1364,109 @@ body::after {
 }
 
 .toggle-box {
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 5px;
+    background: transparent;
+    border: 1px solid transparent;
     border-radius: 12px;
     text-align: center;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
 }
 
 .toggle-box .toggle-icon {
-    font-size: 20px;
+    font-size: 18px;
 }
 
-.split-toggle input:checked+.toggle-box {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
-    border-color: var(--accent-primary);
-    color: white;
-    box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+/* Individual colors for each state when checked */
+.split-toggle input:checked+.toggle-box.personal {
+    background: rgba(167, 139, 250, 0.15);
+    border-color: rgba(167, 139, 250, 0.4);
+    color: #a78bfa;
+    box-shadow: 0 4px 15px rgba(167, 139, 250, 0.15);
+}
+
+.split-toggle input:checked+.toggle-box.pending {
+    background: rgba(251, 191, 36, 0.15);
+    border-color: rgba(251, 191, 36, 0.4);
+    color: #fbbf24;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.15);
+}
+
+.split-toggle input:checked+.toggle-box.added {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #10b981;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);
+}
+
+.split-toggle input:checked+.toggle-box .toggle-icon {
+    transform: scale(1.2);
 }
 
 .split-toggle:hover .toggle-box {
-    border-color: rgba(255, 255, 255, 0.3);
     background: rgba(255, 255, 255, 0.05);
+}
+
+/* List Badges */
+.split-badge {
+    cursor: pointer;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    margin-left: 10px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid transparent;
+}
+
+.badge-personal {
+    background: rgba(167, 139, 250, 0.15);
+    color: #a78bfa;
+    border-color: rgba(167, 139, 250, 0.3);
+}
+
+.badge-pending {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.3);
+}
+
+.badge-added {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.split-badge:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+.badge-personal:hover::after {
+    content: " (Split?)";
+    font-size: 9px;
+    opacity: 0.8;
+}
+
+.badge-pending:hover::after {
+    content: " (Added?)";
+    font-size: 9px;
+    opacity: 0.8;
+}
+
+.badge-added:hover::after {
+    content: " (🎉)";
+    font-size: 9px;
+    opacity: 0.8;
 }
 
 .theme-toggle {
