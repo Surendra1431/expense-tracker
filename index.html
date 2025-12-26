@@ -263,9 +263,12 @@
             <div class="transactions-header">
                 <h2 class="section-title">🕒 Recent Transactions</h2>
                 <div class="splitwise-filter-group">
-                    <button type="button" class="filter-chip active" data-status="all">All</button>
-                    <button type="button" class="filter-chip" data-status="splitwise">Splitwise</button>
-                    <button type="button" class="filter-chip" data-status="personal">Personal</button>
+                    <button type="button" class="filter-chip active" onclick="setFilter('all')"
+                        data-status="all">All</button>
+                    <button type="button" class="filter-chip" onclick="setFilter('splitwise')"
+                        data-status="splitwise">Splitwise</button>
+                    <button type="button" class="filter-chip" onclick="setFilter('personal')"
+                        data-status="personal">Personal</button>
                 </div>
                 <div class="header-actions">
                     <button id="export-data" class="action-btn export-btn">📥 Export</button>
@@ -418,7 +421,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-    <script src="app.js"></script>
+    <!-- App Logic -->
+    <script src="app.js?v=2"></script>
 </body>
 
 </html>

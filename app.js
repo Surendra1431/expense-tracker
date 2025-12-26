@@ -67,9 +67,35 @@ function setDefaultDate() {
     dateInput.value = today;
 }
 
+// Global Filter Handler (Direct & Robust)
+window.setFilter = function (status) {
+    console.log('🔘 Filter Clicked via Direct Handler:', status);
+
+    // Update active UI state
+    document.querySelectorAll('.filter-chip').forEach(btn => {
+        if (btn.dataset.status === status) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    // Update Filter Variable
+    splitFilter = status;
+
+    // Refresh UI
+    updateUI();
+
+    // Feedback
+    const monthName = selectedMonth ? new Date(selectedMonth + '-01').toLocaleDateString('en-US', { month: 'long' }) : 'All Time';
+    showNotification(`Filtering ${status} for ${monthName}`, 'info');
+};
+
 // Setup event listeners
 function setupEventListeners() {
     // Split Status: Native radio buttons handle state now (No JS init needed)
+
+    // Note: Filter buttons now use onclick="setFilter(...)" in HTML for 100% reliability
 
     transactionForm.addEventListener('submit', handleFormSubmit);
     clearAllBtn.addEventListener('click', clearAllTransactions);
@@ -95,33 +121,6 @@ function setupEventListeners() {
     const typeRadios = document.querySelectorAll('input[name="type"]');
     typeRadios.forEach(radio => {
         radio.addEventListener('change', updateCategoryOptions);
-    });
-
-    // Unified Event Delegation (Bulletproof Strategy)
-    // Unified Event Delegation (Bulletproof Strategy)
-    document.addEventListener('click', (e) => {
-        // Handle Recent Transactions Filter Buttons Only
-        const filterBtn = e.target.closest('.filter-chip');
-        if (filterBtn) {
-            e.preventDefault();
-
-            // Update active UI state
-            document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-            filterBtn.classList.add('active');
-
-            // 🔑 IMPORTANT: update the SAME filter variable used by transaction list
-            const newStatus = filterBtn.getAttribute('data-status');
-            splitFilter = newStatus;
-
-            console.log('Recent Transactions filter:', splitFilter);
-
-            // 🔄 Re-render UI immediately
-            updateUI();
-
-            // Optional: Show feedback
-            const monthName = selectedMonth ? new Date(selectedMonth + '-01').toLocaleDateString('en-US', { month: 'long' }) : 'All Time';
-            showNotification(`Filtering ${splitFilter} for ${monthName}`, 'info');
-        }
     });
 
     // Initialize with default (income)
