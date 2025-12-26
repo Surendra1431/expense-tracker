@@ -306,18 +306,20 @@ function handleFormSubmit(e) {
     updateCategoryOptions(); // Ensure UI hides split toggle for new 'income' default
 
     // Auto-switch filter to show the new item (User Requested Feature)
-    if (splitStatus !== 'personal') {
-        // If "To Split" or "Added", switch to that tab so user sees it immediately
-        window.setFilter(splitStatus);
-    } else {
-        // If "Personal", switch to Personal tab if we're currently hiding it
-        if (splitFilter !== 'all' && splitFilter !== 'personal') {
-            window.setFilter('personal');
+    // Wrap in setTimeout to ensure it runs AFTER any form resets or UI updates
+    setTimeout(() => {
+        if (splitStatus !== 'personal') {
+            console.log('🔄 Auto-switching to:', splitStatus);
+            window.setFilter(splitStatus);
         } else {
-            // Otherwise just refresh the current view
-            updateUI();
+            // For personal items, ensure we aren't stuck in a split view
+            if (splitFilter !== 'all' && splitFilter !== 'personal') {
+                window.setFilter('personal');
+            } else {
+                updateUI();
+            }
         }
-    }
+    }, 50);
 
     showNotification(
         type === 'income'
