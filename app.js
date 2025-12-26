@@ -42,14 +42,19 @@ const expenseColors = [
     'rgba(255, 118, 117, 0.8)',
     'rgba(178, 190, 195, 0.8)'
 ];
+// Budget configuration
+let monthlyBudget = 1000;
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
     loadTransactions();
+    loadBudget();
+    loadTheme();
     setDefaultDate();
     initializeCharts();
     updateUI();
     setupEventListeners();
+    setupNewFeatures();
 });
 
 // Set default date to today
@@ -1013,3 +1018,357 @@ document.addEventListener('DOMContentLoaded', () => {
         initGitHubSync();
     }, 100);
 });
+
+// ===========================
+// New Features
+// ===========================
+
+// Setup new features
+function setupNewFeatures() {
+    setupThemeToggle();
+    setupBudgetModal();
+    setupFilters();
+}
+
+// ===== Theme Toggle =====
+function loadTheme() {
+    const savedTheme = localStorage.getItem('finance-tracker-theme');
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+        updateThemeIcon();
+    }
+}
+
+function setupThemeToggle() {
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('light-theme');
+    const isLight = document.body.classList.contains('light-theme');
+    localStorage.setItem('finance-tracker-theme', isLight ? 'light' : 'dark');
+    updateThemeIcon();
+    showNotification(isLight ? 'Light mode activated! ☀️' : 'Dark mode activated! 🌙', 'info');
+}
+
+function updateThemeIcon() {
+    const themeIcon = document.querySelector('.theme-icon');
+    if (themeIcon) {
+        const isLight = document.body.classList.contains('light-theme');
+        themeIcon.textContent = isLight ? '☀️' : '🌙';
+    }
+}
+
+// ===== Budget Management =====
+function loadBudget() {
+    const saved = localStorage.getItem('finance-tracker-budget');
+    if (saved) {
+        monthlyBudget = parseFloat(saved);
+    }
+}
+
+function saveBudget() {
+    localStorage.setItem('finance-tracker-budget', monthlyBudget.toString());
+}
+
+function setupBudgetModal() {
+    const setBudgetBtn = document.getElementById('set-budget-btn');
+    const budgetModal = document.getElementById('budget-modal');
+    const closeBudgetModal = document.getElementById('close-budget-modal');
+    const saveBudgetBtn = document.getElementById('save-budget');
+    const budgetAmountInput = document.getElementById('budget-amount');
+
+    if (!setBudgetBtn) return;
+
+    setBudgetBtn.addEventListener('click', () => {
+        budgetAmountInput.value = monthlyBudget;
+        budgetModal.classList.add('show');
+    });
+
+    closeBudgetModal.addEventListener('click', () => {
+        budgetModal.classList.remove('show');
+    });
+
+    budgetModal.addEventListener('click', (e) => {
+        if (e.target === budgetModal) {
+            budgetModal.classList.remove('show');
+        }
+    });
+
+    saveBudgetBtn.addEventListener('click', () => {
+        const amount = parseFloat(budgetAmountInput.value);
+        if (amount && amount > 0) {
+            monthlyBudget = amount;
+            saveBudget();
+            updateBudgetProgress();
+            budgetModal.classList.remove('show');
+            showNotification(`Budget set to $${monthlyBudget.toLocaleString()}! 🎯`, 'success');
+        } else {
+            showNotification('Please enter a valid amount! 💰', 'error');
+        }
+    });
+}
+
+function updateBudgetProgress() {
+    const budgetBar = document.getElementById('budget-bar');
+    const budgetSpent = document.getElementById('budget-spent');
+    const budgetTotal = document.getElementById('budget-total');
+    const budgetStatus = document.getElementById('budget-status');
+
+    if (!budgetBar) return;
+
+    // Calculate this month's expenses
+    const now = new Date();
+    const thisMonth = now.getMonth();
+    const thisYear = now.getFullYear();
+
+    const monthlyExpenses = transactions
+        .filter(t => {
+            const date = new Date(t.date);
+            return t.type === 'expense' &&
+                date.getMonth() === thisMonth &&
+                date.getFullYear() === thisYear;
+        })
+        .reduce((sum, t) => sum + t.amount, 0);
+
+    const percentage = Math.min((monthlyExpenses / monthlyBudget) * 100, 100);
+
+    budgetBar.style.width = `${percentage}%`;
+    budgetSpent.textContent = `$${monthlyExpenses.toLocaleString()}`;
+    budgetTotal.textContent = `$${monthlyBudget.toLocaleString()}`;
+
+    // Update status and colors
+    budgetBar.classList.remove('warning', 'danger');
+    budgetStatus.classList.remove('warning', 'danger');
+
+    if (percentage >= 100) {
+        budgetBar.classList.add('danger');
+        budgetStatus.classList.add('danger');
+        budgetStatus.textContent = '🚨 Budget exceeded! Time to cut back.';
+    } else if (percentage >= 80) {
+        budgetBar.classList.add('warning');
+        budgetStatus.classList.add('warning');
+        budgetStatus.textContent = '⚠️ Almost there! Spend carefully.';
+    } else if (percentage >= 50) {
+        budgetStatus.textContent = '📊 Halfway through your budget.';
+    } else {
+        budgetStatus.textContent = '💪 On track! Keep it up!';
+    }
+}
+
+// ===== Quick Stats =====
+function updateQuickStats() {
+    const monthExpenseEl = document.getElementById('month-expense');
+    const dailyAvgEl = document.getElementById('daily-avg');
+    const topCategoryEl = document.getElementById('top-category');
+    const totalTransactionsEl = document.getElementById('total-transactions');
+
+    if (!monthExpenseEl) return;
+
+    const now = new Date();
+    const thisMonth = now.getMonth();
+    const thisYear = now.getFullYear();
+    const daysInMonth = new Date(thisYear, thisMonth + 1, 0).getDate();
+    const currentDay = now.getDate();
+
+    // This month's expenses
+    const monthlyExpenses = transactions
+        .filter(t => {
+            const date = new Date(t.date);
+            return t.type === 'expense' &&
+                date.getMonth() === thisMonth &&
+                date.getFullYear() === thisYear;
+        })
+        .reduce((sum, t) => sum + t.amount, 0);
+
+    // Daily average
+    const dailyAvg = currentDay > 0 ? monthlyExpenses / currentDay : 0;
+
+    // Top expense category
+    const categoryTotals = {};
+    transactions
+        .filter(t => t.type === 'expense')
+        .forEach(t => {
+            categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount;
+        });
+
+    const topCategory = Object.entries(categoryTotals)
+        .sort((a, b) => b[1] - a[1])[0];
+
+    monthExpenseEl.textContent = `$${monthlyExpenses.toFixed(0)}`;
+    dailyAvgEl.textContent = `$${dailyAvg.toFixed(0)}`;
+    topCategoryEl.textContent = topCategory ? topCategory[0].split(' ')[0] : '-';
+    totalTransactionsEl.textContent = transactions.length;
+}
+
+// ===== Search & Filter =====
+function setupFilters() {
+    const searchInput = document.getElementById('search-input');
+    const filterType = document.getElementById('filter-type');
+    const filterPeriod = document.getElementById('filter-period');
+
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', applyFilters);
+    filterType.addEventListener('change', applyFilters);
+    filterPeriod.addEventListener('change', applyFilters);
+}
+
+function applyFilters() {
+    const searchInput = document.getElementById('search-input');
+    const filterType = document.getElementById('filter-type');
+    const filterPeriod = document.getElementById('filter-period');
+
+    const searchTerm = searchInput.value.toLowerCase();
+    const type = filterType.value;
+    const period = filterPeriod.value;
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const filtered = transactions.filter(t => {
+        // Search filter
+        const matchesSearch = t.description.toLowerCase().includes(searchTerm) ||
+            t.category.toLowerCase().includes(searchTerm);
+
+        // Type filter
+        const matchesType = type === 'all' || t.type === type;
+
+        // Period filter
+        const transactionDate = new Date(t.date);
+        let matchesPeriod = true;
+        if (period === 'today') {
+            matchesPeriod = transactionDate >= today;
+        } else if (period === 'week') {
+            matchesPeriod = transactionDate >= weekAgo;
+        } else if (period === 'month') {
+            matchesPeriod = transactionDate >= monthStart;
+        }
+
+        return matchesSearch && matchesType && matchesPeriod;
+    });
+
+    renderFilteredTransactions(filtered);
+}
+
+function renderFilteredTransactions(filteredTransactions) {
+    if (filteredTransactions.length === 0) {
+        transactionsList.innerHTML = `
+            <p class="empty-state">
+                <span class="empty-icon">🔍</span>
+                <span>No transactions found matching your filters.</span>
+            </p>
+        `;
+        return;
+    }
+
+    const html = filteredTransactions.map(transaction => {
+        const emoji = transaction.category.split(' ')[0] || '💰';
+        const sign = transaction.type === 'income' ? '+' : '-';
+        const formattedDate = new Date(transaction.date).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+
+        return `
+            <div class="transaction-item ${transaction.type}" data-id="${transaction.id}">
+                <div class="transaction-icon">${emoji}</div>
+                <div class="transaction-details">
+                    <div class="transaction-description">${escapeHtml(transaction.description)}</div>
+                    <div class="transaction-meta">
+                        <span>${transaction.category}</span>
+                        <span>•</span>
+                        <span>${formattedDate}</span>
+                    </div>
+                </div>
+                <div class="transaction-amount">${sign}$${transaction.amount.toFixed(2)}</div>
+                <button class="delete-btn" onclick="deleteTransaction(${transaction.id})" title="Delete">🗑️</button>
+            </div>
+        `;
+    }).join('');
+
+    transactionsList.innerHTML = html;
+}
+
+// ===== Confetti Celebration =====
+function triggerConfetti(type = 'income') {
+    if (typeof confetti === 'undefined') return;
+
+    const colors = type === 'income'
+        ? ['#38ef7d', '#00F5A0', '#00D9F5', '#7FFFD4']
+        : ['#FF6B6B', '#FF8E53', '#FE6B8B', '#FF7043'];
+
+    confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: colors
+    });
+}
+
+// Override the original updateUI to include new stats
+const originalUpdateUI = updateUI;
+updateUI = function () {
+    originalUpdateUI();
+    updateQuickStats();
+    updateBudgetProgress();
+};
+
+// Add confetti to transaction submission
+const originalHandleFormSubmit = handleFormSubmit;
+handleFormSubmit = function (e) {
+    e.preventDefault();
+
+    const type = document.querySelector('input[name="type"]:checked').value;
+    const description = descriptionInput.value.trim();
+    const category = categorySelect.value;
+    const amount = parseFloat(amountInput.value);
+    const date = dateInput.value;
+
+    if (!description || !category || !amount || !date) {
+        showNotification('Please fill in all fields! 📝', 'error');
+        return;
+    }
+
+    const transaction = {
+        id: Date.now(),
+        type,
+        description,
+        category,
+        amount,
+        date
+    };
+
+    transactions.unshift(transaction);
+    saveTransactions();
+    updateUI();
+
+    // Reset form
+    transactionForm.reset();
+    setDefaultDate();
+    document.getElementById('type-income').checked = true;
+
+    // Clear filters
+    const searchInput = document.getElementById('search-input');
+    const filterType = document.getElementById('filter-type');
+    const filterPeriod = document.getElementById('filter-period');
+    if (searchInput) searchInput.value = '';
+    if (filterType) filterType.value = 'all';
+    if (filterPeriod) filterPeriod.value = 'all';
+
+    // Trigger confetti!
+    triggerConfetti(type);
+
+    showNotification(
+        type === 'income'
+            ? `Income added: +$${amount.toFixed(2)} 💰`
+            : `Expense added: -$${amount.toFixed(2)} 💸`,
+        'success'
+    );
+};

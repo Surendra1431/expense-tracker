@@ -18,12 +18,49 @@
     <div class="app-container">
         <!-- Header -->
         <header class="header">
-            <div class="logo">
-                <span class="logo-icon">💎</span>
-                <h1>Finance Tracker</h1>
+            <div class="header-top">
+                <div class="logo">
+                    <span class="logo-icon">💎</span>
+                    <h1>Finance Tracker</h1>
+                </div>
+                <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
             </div>
             <p class="tagline">Track your money with style ✨</p>
         </header>
+
+        <!-- Quick Stats Bar -->
+        <section class="quick-stats">
+            <div class="stat-item">
+                <span class="stat-icon">📅</span>
+                <div class="stat-info">
+                    <span class="stat-label">This Month</span>
+                    <span class="stat-value" id="month-expense">$0</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">📊</span>
+                <div class="stat-info">
+                    <span class="stat-label">Daily Avg</span>
+                    <span class="stat-value" id="daily-avg">$0</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">🔥</span>
+                <div class="stat-info">
+                    <span class="stat-label">Top Expense</span>
+                    <span class="stat-value" id="top-category">-</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">📝</span>
+                <div class="stat-info">
+                    <span class="stat-label">Transactions</span>
+                    <span class="stat-value" id="total-transactions">0</span>
+                </div>
+            </div>
+        </section>
 
         <!-- Summary Cards -->
         <section class="summary-section">
@@ -50,6 +87,27 @@
                     <span class="card-value" id="net-balance">$0.00</span>
                 </div>
                 <div class="card-glow"></div>
+            </div>
+        </section>
+
+        <!-- Monthly Budget Goals -->
+        <section class="budget-section">
+            <div class="budget-header">
+                <h2 class="section-title">🎯 Monthly Budget</h2>
+                <button class="set-budget-btn" id="set-budget-btn">⚙️ Set Budget</button>
+            </div>
+            <div class="budget-progress">
+                <div class="budget-bar-container">
+                    <div class="budget-bar" id="budget-bar" style="width: 0%"></div>
+                </div>
+                <div class="budget-info">
+                    <span id="budget-spent">$0</span>
+                    <span>of</span>
+                    <span id="budget-total">$1,000</span>
+                </div>
+                <div class="budget-status" id="budget-status">
+                    💪 On track! Keep it up!
+                </div>
             </div>
         </section>
 
@@ -182,10 +240,31 @@
             <div class="transactions-header">
                 <h2 class="section-title">📋 Recent Transactions</h2>
                 <div class="header-actions">
-                    <button id="export-data" class="action-btn export-btn">📥 Export Backup</button>
-                    <label for="import-file" class="action-btn import-btn">📤 Import Data</label>
+                    <button id="export-data" class="action-btn export-btn">📥 Export</button>
+                    <label for="import-file" class="action-btn import-btn">📤 Import</label>
                     <input type="file" id="import-file" accept=".json" style="display: none;">
-                    <button id="clear-all" class="clear-btn">🗑️ Clear All</button>
+                    <button id="clear-all" class="clear-btn">🗑️ Clear</button>
+                </div>
+            </div>
+
+            <!-- Search & Filters -->
+            <div class="filter-bar">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-input" placeholder="Search transactions...">
+                </div>
+                <div class="filter-group">
+                    <select id="filter-type" class="filter-select">
+                        <option value="all">All Types</option>
+                        <option value="income">💵 Income</option>
+                        <option value="expense">💸 Expense</option>
+                    </select>
+                    <select id="filter-period" class="filter-select">
+                        <option value="all">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
                 </div>
             </div>
             <div class="transactions-list" id="transactions-list">
@@ -250,11 +329,36 @@
         </div>
     </div>
 
+    <!-- Budget Modal -->
+    <div class="modal-overlay" id="budget-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🎯 Set Monthly Budget</h2>
+                <button class="modal-close" id="close-budget-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">
+                    Set a monthly spending limit to help you stay on track!
+                </p>
+                <div class="form-group">
+                    <label for="budget-amount">Monthly Budget ($)</label>
+                    <input type="number" id="budget-amount" placeholder="1000" min="1" step="100">
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" id="save-budget">💾 Save Budget</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Floating Sync Button -->
     <button class="floating-sync-btn" id="sync-btn" title="Cloud Sync Settings">
         <span class="sync-icon">☁️</span>
         <span class="sync-status-indicator" id="sync-indicator"></span>
     </button>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
 
     <!-- Background decoration -->
     <div class="bg-decoration">
@@ -264,6 +368,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <script src="app.js"></script>
 </body>
 
