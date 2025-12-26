@@ -97,10 +97,14 @@ function setupEventListeners() {
     // Splitwise filters
     document.querySelectorAll('.filter-chip').forEach(chip => {
         chip.addEventListener('click', () => {
+            console.log('Filter clicked:', chip.dataset.splitFilter);
             document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
             chip.classList.add('active');
             splitFilter = chip.dataset.splitFilter;
             updateUI();
+
+            const monthName = selectedMonth ? new Date(selectedMonth + '-01').toLocaleDateString('en-US', { month: 'long' }) : 'All Time';
+            showNotification(`Filtering ${splitFilter} for ${monthName} 🔍`, 'info');
         });
     });
 
@@ -282,6 +286,18 @@ function deleteTransaction(id) {
     showNotification('Transaction deleted! 🗑️', 'info');
 }
 
+// Toggle Splitwise status
+function toggleSplit(id) {
+    const tx = transactions.find(t => t.id === id);
+    if (tx) {
+        tx.isSplitwise = !tx.isSplitwise;
+        saveTransactions();
+        updateUI();
+        const msg = tx.isSplitwise ? 'Marked as Splitwise 👥' : 'Marked as Personal 👤';
+        showNotification(msg, 'success');
+    }
+}
+
 // Clear all transactions
 function clearAllTransactions() {
     if (transactions.length === 0) {
@@ -364,7 +380,11 @@ function updateTransactionsList() {
 
     if (filteredTx.length === 0) {
         let message = 'No transactions found! 🔍';
-        if (!selectedMonth && splitFilter === 'all') {
+        if (splitFilter === 'splitwise') {
+            message = 'No Splitwise items found for this period 👥';
+        } else if (splitFilter === 'personal') {
+            message = 'No Personal items found for this period 👤';
+        } else if (!selectedMonth) {
             message = 'No transactions yet. Start by adding one above!';
         }
 
@@ -387,8 +407,8 @@ function updateTransactionsList() {
         });
 
         const splitBadge = transaction.isSplitwise
-            ? '<span class="split-badge badge-split">👥 Splitwise</span>'
-            : '<span class="split-badge badge-personal">👤 Personal</span>';
+            ? `<span class="split-badge badge-split" onclick="toggleSplit(${transaction.id})" title="Click to mark as Personal">👥 Splitwise</span>`
+            : `<span class="split-badge badge-personal" onclick="toggleSplit(${transaction.id})" title="Click to mark as Splitwise">👤 Personal</span>`;
 
         return `
             <div class="transaction-item ${transaction.type}" data-id="${transaction.id}">
@@ -1754,10 +1774,15 @@ function updateInsights() {
     if (topCatEl) topCatEl.textContent = topCategory;
     if (countEl) countEl.textContent = filteredTx.length;
 
+    // Count personal expenses that might need splitting
+    const pendingSplit = filteredTx.filter(t => t.type === 'expense' && !t.isSplitwise).length;
+
     // Smart tip
     if (tipEl) {
         if (filteredTx.length === 0) {
             tipEl.textContent = '💡 Add your income and expenses to see insights!';
+        } else if (pendingSplit > 0 && splitFilter !== 'splitwise') {
+            tipEl.textContent = `💡 You have ${pendingSplit} personal expenses. Don't forget to add shared items to Splitwise! 👥`;
         } else if (savings < 0) {
             tipEl.textContent = `⚠️ You're spending more than you earn! Try to cut back on ${topCategory}`;
         } else if (savingsRate >= 30) {

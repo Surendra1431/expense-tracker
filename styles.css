@@ -1310,51 +1310,80 @@ body::after {
 
 .splitwise-filter-group {
     display: flex;
-    gap: 10px;
+    gap: 12px;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .filter-chip {
-    padding: 8px 16px;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 20px;
+    border-radius: 10px;
+    background: transparent;
+    border: none;
     color: var(--text-secondary);
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
 }
 
 .filter-chip:hover {
-    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .filter-chip.active {
-    background: var(--accent-primary);
-    border-color: var(--accent-primary);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    transform: translateY(-1px);
 }
 
-/* ===== Splitwise Badge ===== */
+/* ===== Splitwise Badge & Toggle ===== */
 .split-badge {
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-left: 8px;
-    font-weight: 600;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    margin-left: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid transparent;
+}
+
+.split-badge:hover {
+    transform: scale(1.05);
+    filter: brightness(1.2);
 }
 
 .badge-split {
-    background: rgba(102, 126, 234, 0.15);
-    color: #a78bfa;
-    border: 1px solid rgba(102, 126, 234, 0.3);
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.3);
 }
 
 .badge-personal {
-    background: rgba(100, 116, 139, 0.15);
-    color: #94a3b8;
-    border: 1px solid rgba(148, 163, 184, 0.3);
+    background: rgba(102, 126, 234, 0.15);
+    color: #a78bfa;
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.badge-personal:hover::after {
+    content: " (Click to Split)";
+    font-size: 9px;
+    opacity: 0.8;
+}
+
+.badge-split:hover::after {
+    content: " (Added! 🎉)";
+    font-size: 9px;
+    opacity: 0.8;
 }
 
 .theme-toggle {
