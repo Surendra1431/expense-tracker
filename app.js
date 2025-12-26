@@ -244,7 +244,8 @@ function handleFormSubmit(e) {
     const amount = parseFloat(amountInput.value);
     const date = dateInput.value;
 
-    const isSplitwise = document.getElementById('is-splitwise').checked;
+    const splitType = document.querySelector('input[name="split-type"]:checked').value;
+    const isSplitwise = splitType === 'splitwise';
 
     if (!description || !category || !amount || !date) {
         showNotification('Please fill in all fields! 📝', 'error');
@@ -269,6 +270,8 @@ function handleFormSubmit(e) {
     transactionForm.reset();
     setDefaultDate();
     document.getElementById('type-income').checked = true;
+    const personalRadio = document.querySelector('input[name="split-type"][value="personal"]');
+    if (personalRadio) personalRadio.checked = true;
 
     showNotification(
         type === 'income'

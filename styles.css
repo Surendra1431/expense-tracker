@@ -1386,6 +1386,52 @@ body::after {
     opacity: 0.8;
 }
 
+/* ===== Splitwise Segmented Toggle ===== */
+.splitwise-toggle-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.split-toggle {
+    cursor: pointer;
+}
+
+.split-toggle input {
+    display: none;
+}
+
+.toggle-box {
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+}
+
+.toggle-box .toggle-icon {
+    font-size: 20px;
+}
+
+.split-toggle input:checked+.toggle-box {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+    border-color: var(--accent-primary);
+    color: white;
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+}
+
+.split-toggle:hover .toggle-box {
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+}
+
 .theme-toggle {
     position: absolute;
     right: 0;
