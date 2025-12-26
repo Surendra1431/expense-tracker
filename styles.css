@@ -342,66 +342,184 @@ body::after {
         0 0 20px #ff3333;
 }
 
-/* ===== Stranger Things Title Lights ===== */
-.stranger-things-lights {
+/* ===== Joyce Byers Wall ===== */
+.joyce-wall {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 100;
-    background: linear-gradient(180deg, rgba(10, 0, 0, 0.95) 0%, rgba(20, 0, 0, 0.8) 70%, transparent 100%);
-    padding: 15px 20px 25px;
+    background: linear-gradient(180deg,
+            #d4b896 0%,
+            /* Beige/tan wall color */
+            #c9a882 50%,
+            #1a1a2e 100%);
+    /* Fades to dark */
+    padding: 20px 15px 30px;
+    box-shadow:
+        inset 0 0 100px rgba(0, 0, 0, 0.3),
+        0 5px 30px rgba(0, 0, 0, 0.5);
+}
+
+.light-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+/* Wire connecting the lights */
+.light-row::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: #2a2a2a;
+    z-index: 0;
+    border-radius: 1px;
+}
+
+.light-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 5px;
+    z-index: 1;
 }
 
-.st-row {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
+/* The bulb - on TOP */
+.bulb {
+    width: 14px;
+    height: 18px;
+    border-radius: 50% 50% 40% 40%;
+    position: relative;
+    animation: bulb-flicker 4s ease-in-out infinite;
 }
 
-.stranger-things-lights .light {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    transition: transform 0.3s;
+/* Bulb colors with glow */
+.bulb.red {
+    background: radial-gradient(circle at 30% 30%, #ff6666, #cc0000);
+    box-shadow: 0 0 8px #ff3333, 0 0 15px #ff0000, 0 0 25px rgba(255, 0, 0, 0.5);
 }
 
-/* Up and down wave effect */
-.stranger-things-lights .light.up {
-    transform: translateY(-8px);
+.bulb.yellow {
+    background: radial-gradient(circle at 30% 30%, #ffee88, #ffcc00);
+    box-shadow: 0 0 8px #ffcc00, 0 0 15px #ffaa00, 0 0 25px rgba(255, 200, 0, 0.5);
 }
 
-.stranger-things-lights .light.down {
-    transform: translateY(8px);
+.bulb.blue {
+    background: radial-gradient(circle at 30% 30%, #66aaff, #0066cc);
+    box-shadow: 0 0 8px #3399ff, 0 0 15px #0066cc, 0 0 25px rgba(0, 100, 255, 0.5);
 }
 
-/* The bulb */
-.stranger-things-lights .light::before {
-    content: '';
-    width: 16px;
-    height: 22px;
-    border-radius: 50% 50% 45% 45%;
-    animation: flicker-light 3s ease-in-out infinite;
+.bulb.green {
+    background: radial-gradient(circle at 30% 30%, #66ff66, #00aa00);
+    box-shadow: 0 0 8px #33cc33, 0 0 15px #00aa00, 0 0 25px rgba(0, 200, 0, 0.5);
 }
 
-/* Letter underneath */
-.stranger-things-lights .light span {
-    font-family: 'ITC Benguiat', 'Times New Roman', serif;
-    font-size: 20px;
+.bulb.purple {
+    background: radial-gradient(circle at 30% 30%, #dd88ff, #9900cc);
+    box-shadow: 0 0 8px #cc33ff, 0 0 15px #9900cc, 0 0 25px rgba(150, 0, 200, 0.5);
+}
+
+/* Hand-painted letters - BELOW the bulb */
+.letter {
+    font-family: 'Brush Script MT', 'Segoe Script', cursive;
+    font-size: 28px;
     font-weight: bold;
-    color: rgba(255, 255, 255, 0.85);
-    text-shadow: 0 0 10px currentColor;
-    letter-spacing: 2px;
+    color: #2a1810;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+    letter-spacing: 0;
+}
+
+/* Flickering animation for bulbs */
+@keyframes bulb-flicker {
+
+    0%,
+    100% {
+        opacity: 0.9;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    20% {
+        opacity: 0.7;
+    }
+
+    30% {
+        opacity: 1;
+    }
+
+    40% {
+        opacity: 0.85;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    60% {
+        opacity: 0.75;
+    }
+
+    70% {
+        opacity: 0.95;
+    }
+
+    80% {
+        opacity: 0.8;
+    }
+
+    90% {
+        opacity: 1;
+    }
+}
+
+/* Different timing for each bulb */
+.light-item:nth-child(1) .bulb {
+    animation-delay: 0.1s;
+}
+
+.light-item:nth-child(2) .bulb {
+    animation-delay: 0.3s;
+}
+
+.light-item:nth-child(3) .bulb {
+    animation-delay: 0.5s;
+}
+
+.light-item:nth-child(4) .bulb {
+    animation-delay: 0.7s;
+}
+
+.light-item:nth-child(5) .bulb {
+    animation-delay: 0.9s;
+}
+
+.light-item:nth-child(6) .bulb {
+    animation-delay: 1.1s;
+}
+
+.light-item:nth-child(7) .bulb {
+    animation-delay: 1.3s;
+}
+
+.light-item:nth-child(8) .bulb {
+    animation-delay: 1.5s;
+}
+
+.light-item:nth-child(9) .bulb {
+    animation-delay: 1.7s;
 }
 
 /* Add padding to body for fixed header */
 body {
-    padding-top: 100px;
+    padding-top: 180px;
 }
 
 .light-string {
