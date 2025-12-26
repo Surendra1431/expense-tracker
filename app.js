@@ -1,11 +1,12 @@
 // Finance Tracker Application
 // ===========================
 
-// Global variables
+// Global state
 let transactions = [];
-let incomeChart = null;
-let expenseChart = null;
-let comparisonChart = null;
+let budget = 0;
+let selectedMonth = null;
+let splitFilter = 'all'; // 'all', 'splitwise', 'personal'
+let charts = {};
 let timelineChart = null;
 
 // DOM Elements
@@ -45,7 +46,6 @@ const expenseColors = [
 ];
 // Budget configuration
 let monthlyBudget = 1000;
-let selectedMonth = null; // For month filtering
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
@@ -92,6 +92,16 @@ function setupEventListeners() {
     const typeRadios = document.querySelectorAll('input[name="type"]');
     typeRadios.forEach(radio => {
         radio.addEventListener('change', updateCategoryOptions);
+    });
+
+    // Splitwise filters
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            splitFilter = chip.dataset.splitFilter;
+            updateUI();
+        });
     });
 
     // Initialize with default (income)
@@ -157,7 +167,7 @@ function exportData() {
 
     const link = document.createElement('a');
     link.href = url;
-    link.download = `finance-tracker-backup-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `finance - tracker - backup - ${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -230,6 +240,8 @@ function handleFormSubmit(e) {
     const amount = parseFloat(amountInput.value);
     const date = dateInput.value;
 
+    const isSplitwise = document.getElementById('is-splitwise').checked;
+
     if (!description || !category || !amount || !date) {
         showNotification('Please fill in all fields! 📝', 'error');
         return;
@@ -241,7 +253,8 @@ function handleFormSubmit(e) {
         description,
         category,
         amount,
-        date
+        date,
+        isSplitwise
     };
 
     transactions.unshift(transaction);
@@ -328,7 +341,7 @@ function animateValue(element, value, showSign = false) {
     const prefix = showSign && value >= 0 ? '+' : '';
     const color = showSign ? (value >= 0 ? '#38ef7d' : '#f45c43') : null;
 
-    element.textContent = `${prefix}$${value.toFixed(2)}`;
+    element.textContent = `${prefix}$${value.toFixed(2)} `;
     if (color) element.style.color = color;
 
     // Add a quick pulse animation
@@ -340,12 +353,21 @@ function animateValue(element, value, showSign = false) {
 
 // Update transactions list
 function updateTransactionsList() {
-    const filteredTx = getFilteredTransactions();
+    let filteredTx = getFilteredTransactions();
+
+    // Secondary filter: Splitwise status
+    if (splitFilter === 'splitwise') {
+        filteredTx = filteredTx.filter(t => t.isSplitwise);
+    } else if (splitFilter === 'personal') {
+        filteredTx = filteredTx.filter(t => !t.isSplitwise);
+    }
 
     if (filteredTx.length === 0) {
-        const message = selectedMonth
-            ? 'No transactions for this month 📅'
-            : 'No transactions yet. Start by adding one above!';
+        let message = 'No transactions found! 🔍';
+        if (!selectedMonth && splitFilter === 'all') {
+            message = 'No transactions yet. Start by adding one above!';
+        }
+
         transactionsList.innerHTML = `
             <p class="empty-state" id="empty-state">
                 <span class="empty-icon">📝</span>
@@ -364,11 +386,18 @@ function updateTransactionsList() {
             year: 'numeric'
         });
 
+        const splitBadge = transaction.isSplitwise
+            ? '<span class="split-badge badge-split">👥 Splitwise</span>'
+            : '<span class="split-badge badge-personal">👤 Personal</span>';
+
         return `
             <div class="transaction-item ${transaction.type}" data-id="${transaction.id}">
                 <div class="transaction-icon">${emoji}</div>
                 <div class="transaction-details">
-                    <div class="transaction-description">${escapeHtml(transaction.description)}</div>
+                    <div class="transaction-description">
+                        ${escapeHtml(transaction.description)}
+                        ${splitBadge}
+                    </div>
                     <div class="transaction-meta">
                         <span>${transaction.category}</span>
                         <span>•</span>
@@ -598,7 +627,7 @@ function initializeCharts() {
                     callbacks: {
                         label: function (context) {
                             const value = context.parsed.x || 0;
-                            return ` $${value.toLocaleString()}`;
+                            return ` $${value.toLocaleString()} `;
                         }
                     }
                 }
@@ -700,7 +729,7 @@ function initializeCharts() {
                     cornerRadius: 10,
                     callbacks: {
                         label: function (context) {
-                            return ` ${context.dataset.label}: $${context.parsed.y.toLocaleString()}`;
+                            return ` ${context.dataset.label}: $${context.parsed.y.toLocaleString()} `;
                         }
                     }
                 }
@@ -884,7 +913,7 @@ function showNotification(message, type = 'info') {
     if (existing) existing.remove();
 
     const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
+    notification.className = `notification notification - ${type} `;
     notification.innerHTML = message;
 
     // Add styles
@@ -918,27 +947,27 @@ function showNotification(message, type = 'info') {
         const style = document.createElement('style');
         style.id = 'notification-styles';
         style.textContent = `
-            @keyframes slideInRight {
+@keyframes slideInRight {
                 from {
-                    opacity: 0;
-                    transform: translateX(100px);
-                }
+        opacity: 0;
+        transform: translateX(100px);
+    }
                 to {
-                    opacity: 1;
-                    transform: translateX(0);
-                }
-            }
-            @keyframes slideOutRight {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+@keyframes slideOutRight {
                 from {
-                    opacity: 1;
-                    transform: translateX(0);
-                }
+        opacity: 1;
+        transform: translateX(0);
+    }
                 to {
-                    opacity: 0;
-                    transform: translateX(100px);
-                }
-            }
-        `;
+        opacity: 0;
+        transform: translateX(100px);
+    }
+}
+`;
         document.head.appendChild(style);
     }
 
@@ -1151,7 +1180,7 @@ async function createGist() {
     const response = await fetch('https://api.github.com/gists', {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${githubConfig.token}`,
+            'Authorization': `Bearer ${githubConfig.token} `,
             'Content-Type': 'application/json',
             'Accept': 'application/vnd.github.v3+json'
         },
