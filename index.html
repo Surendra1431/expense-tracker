@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Track your income and expenses with beautiful pie chart visualizations. Add emojis to categorize your finances easily.">
+    <title>💰 Finance Tracker - Income & Expense Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">💎</span>
+                <h1>Finance Tracker</h1>
+            </div>
+            <p class="tagline">Track your money with style ✨</p>
+        </header>
+
+        <!-- Summary Cards -->
+        <section class="summary-section">
+            <div class="summary-card income-card">
+                <div class="card-icon">📈</div>
+                <div class="card-content">
+                    <span class="card-label">Total Income</span>
+                    <span class="card-value" id="total-income">$0.00</span>
+                </div>
+                <div class="card-glow"></div>
+            </div>
+            <div class="summary-card expense-card">
+                <div class="card-icon">📉</div>
+                <div class="card-content">
+                    <span class="card-label">Total Expenses</span>
+                    <span class="card-value" id="total-expense">$0.00</span>
+                </div>
+                <div class="card-glow"></div>
+            </div>
+            <div class="summary-card balance-card">
+                <div class="card-icon">💰</div>
+                <div class="card-content">
+                    <span class="card-label">Net Balance</span>
+                    <span class="card-value" id="net-balance">$0.00</span>
+                </div>
+                <div class="card-glow"></div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Form -->
+            <section class="form-section">
+                <h2 class="section-title">➕ Add Transaction</h2>
+                <form id="transaction-form" class="transaction-form">
+                    <div class="form-group">
+                        <label for="transaction-type">Type</label>
+                        <div class="type-toggle">
+                            <input type="radio" id="type-income" name="type" value="income" checked>
+                            <label for="type-income" class="toggle-btn income-toggle">
+                                <span>💵 Income</span>
+                            </label>
+                            <input type="radio" id="type-expense" name="type" value="expense">
+                            <label for="type-expense" class="toggle-btn expense-toggle">
+                                <span>💸 Expense</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" id="description" placeholder="e.g., 🍕 Pizza dinner" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" required>
+                            <option value="">Select a category...</option>
+                            <optgroup label="💵 Income Categories">
+                                <option value="💼 Salary">💼 Salary</option>
+                                <option value="💰 Freelance">💰 Freelance</option>
+                                <option value="📈 Investment">📈 Investment</option>
+                                <option value="🎁 Gift">🎁 Gift</option>
+                                <option value="💵 Other Income">💵 Other Income</option>
+                            </optgroup>
+                            <optgroup label="💸 Expense Categories">
+                                <option value="🍔 Food & Dining">🍔 Food & Dining</option>
+                                <option value="🚗 Transportation">🚗 Transportation</option>
+                                <option value="🏠 Housing">🏠 Housing</option>
+                                <option value="🛒 Shopping">🛒 Shopping</option>
+                                <option value="🎬 Entertainment">🎬 Entertainment</option>
+                                <option value="💊 Healthcare">💊 Healthcare</option>
+                                <option value="📚 Education">📚 Education</option>
+                                <option value="✈️ Travel">✈️ Travel</option>
+                                <option value="💡 Utilities">💡 Utilities</option>
+                                <option value="💳 Other Expense">💳 Other Expense</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="amount">Amount ($)</label>
+                        <input type="number" id="amount" placeholder="0.00" step="0.01" min="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <span>Add Transaction</span>
+                        <span class="btn-icon">✨</span>
+                    </button>
+                </form>
+                
+                <!-- Emoji Picker -->
+                <div class="emoji-section">
+                    <h3>Quick Emojis 🎨</h3>
+                    <div class="emoji-grid" id="emoji-grid">
+                        <button type="button" class="emoji-btn">💰</button>
+                        <button type="button" class="emoji-btn">💵</button>
+                        <button type="button" class="emoji-btn">💸</button>
+                        <button type="button" class="emoji-btn">🏦</button>
+                        <button type="button" class="emoji-btn">💳</button>
+                        <button type="button" class="emoji-btn">🛒</button>
+                        <button type="button" class="emoji-btn">🍕</button>
+                        <button type="button" class="emoji-btn">🍔</button>
+                        <button type="button" class="emoji-btn">☕</button>
+                        <button type="button" class="emoji-btn">🚗</button>
+                        <button type="button" class="emoji-btn">✈️</button>
+                        <button type="button" class="emoji-btn">🏠</button>
+                        <button type="button" class="emoji-btn">💊</button>
+                        <button type="button" class="emoji-btn">📚</button>
+                        <button type="button" class="emoji-btn">🎬</button>
+                        <button type="button" class="emoji-btn">🎮</button>
+                        <button type="button" class="emoji-btn">👕</button>
+                        <button type="button" class="emoji-btn">💻</button>
+                        <button type="button" class="emoji-btn">📱</button>
+                        <button type="button" class="emoji-btn">🎁</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-section">
+                <h2 class="section-title">📊 Financial Overview</h2>
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>💵 Income Distribution</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="income-chart"></canvas>
+                        </div>
+                        <p class="chart-empty" id="income-empty">No income data yet. Add some income! 💰</p>
+                    </div>
+                    <div class="chart-card">
+                        <h3>💸 Expense Distribution</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="expense-chart"></canvas>
+                        </div>
+                        <p class="chart-empty" id="expense-empty">No expense data yet. Start tracking! 📝</p>
+                    </div>
+                    <div class="chart-card full-width">
+                        <h3>📈 Income vs Expenses</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="comparison-chart"></canvas>
+                        </div>
+                        <p class="chart-empty" id="comparison-empty">Add transactions to see the comparison! 📊</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Transactions List -->
+        <section class="transactions-section">
+            <div class="transactions-header">
+                <h2 class="section-title">📋 Recent Transactions</h2>
+                <button id="clear-all" class="clear-btn">🗑️ Clear All</button>
+            </div>
+            <div class="transactions-list" id="transactions-list">
+                <p class="empty-state" id="empty-state">
+                    <span class="empty-icon">📝</span>
+                    <span>No transactions yet. Start by adding one above!</span>
+                </p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Made with 💖 | Finance Tracker © 2025</p>
+        </footer>
+    </div>
+
+    <!-- Background decoration -->
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
