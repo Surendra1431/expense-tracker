@@ -389,30 +389,32 @@ function initializeCharts() {
         }
     };
 
-    // Beautiful income colors - greens and teals
+    // VERY DISTINCT income colors - each completely different
     const funIncomeColors = [
-        '#10B981', // Emerald
-        '#14B8A6', // Teal
+        '#22C55E', // Green
+        '#3B82F6', // Blue
+        '#8B5CF6', // Purple
+        '#F59E0B', // Amber
         '#06B6D4', // Cyan
-        '#22D3EE', // Light cyan
-        '#34D399', // Green
-        '#2DD4BF', // Teal light
-        '#5EEAD4', // Cyan light
-        '#67E8F9'  // Sky
+        '#EC4899', // Pink
+        '#84CC16', // Lime
+        '#6366F1', // Indigo
+        '#14B8A6', // Teal
+        '#F97316'  // Orange
     ];
 
-    // Beautiful expense colors - reds, oranges, pinks
+    // VERY DISTINCT expense colors - each completely different
     const funExpenseColors = [
         '#EF4444', // Red
         '#F97316', // Orange
-        '#FB923C', // Orange light
-        '#F43F5E', // Rose
-        '#EC4899', // Pink
-        '#D946EF', // Fuchsia
+        '#FBBF24', // Yellow
         '#A855F7', // Purple
-        '#8B5CF6', // Violet
+        '#EC4899', // Pink
+        '#3B82F6', // Blue
+        '#14B8A6', // Teal
+        '#84CC16', // Lime
         '#6366F1', // Indigo
-        '#F87171'  // Light red
+        '#F43F5E'  // Rose
     ];
 
     // Income pie chart
