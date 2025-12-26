@@ -128,18 +128,21 @@ body {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 0;
+    z-index: 1;
     overflow: hidden;
 }
 
 .particle {
     position: absolute;
-    width: 4px;
-    height: 4px;
-    background: radial-gradient(circle, rgba(255, 100, 100, 0.9) 0%, rgba(255, 50, 50, 0) 70%);
+    width: 6px;
+    height: 6px;
+    background: #ff4444;
     border-radius: 50%;
     animation: floatUp 15s linear infinite;
-    opacity: 0;
+    box-shadow:
+        0 0 6px #ff4444,
+        0 0 12px #ff4444,
+        0 0 20px #ff0000;
 }
 
 .particle:nth-child(1) {
@@ -238,12 +241,12 @@ body {
         opacity: 0;
     }
 
-    10% {
-        opacity: 0.8;
+    5% {
+        opacity: 1;
     }
 
-    90% {
-        opacity: 0.6;
+    95% {
+        opacity: 0.8;
     }
 
     100% {
