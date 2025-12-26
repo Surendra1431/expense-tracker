@@ -853,7 +853,8 @@ function updateCharts() {
 
 // Update income chart
 function updateIncomeChart() {
-    const incomeTransactions = transactions.filter(t => t.type === 'income');
+    // USE FILTERED TRANSACTIONS (Respect Date Filter)
+    const incomeTransactions = getFilteredTransactions().filter(t => t.type === 'income');
     const incomeEmpty = document.getElementById('income-empty');
     const incomeCanvas = document.getElementById('income-chart');
 
@@ -875,7 +876,8 @@ function updateIncomeChart() {
 
 // Update expense chart
 function updateExpenseChart() {
-    const expenseTransactions = transactions.filter(t => t.type === 'expense');
+    // USE FILTERED TRANSACTIONS (Respect Date Filter)
+    const expenseTransactions = getFilteredTransactions().filter(t => t.type === 'expense');
     const expenseEmpty = document.getElementById('expense-empty');
     const expenseCanvas = document.getElementById('expense-chart');
 
@@ -897,11 +899,13 @@ function updateExpenseChart() {
 
 // Update comparison chart
 function updateComparisonChart() {
-    const totalIncome = transactions
+    const filtered = getFilteredTransactions(); // Respect Date Filter
+
+    const totalIncome = filtered
         .filter(t => t.type === 'income')
         .reduce((sum, t) => sum + t.amount, 0);
 
-    const totalExpense = transactions
+    const totalExpense = filtered
         .filter(t => t.type === 'expense')
         .reduce((sum, t) => sum + t.amount, 0);
 
@@ -1796,14 +1800,13 @@ function setupMonthFilter() {
 
 // Get filtered transactions based on selected month
 function getFilteredTransactions() {
+    // If no month selected, return all
     if (!selectedMonth) return transactions;
 
-    const [year, month] = selectedMonth.split('-');
-    return transactions.filter(t => {
-        const tDate = new Date(t.date);
-        return tDate.getFullYear() === parseInt(year) &&
-            tDate.getMonth() + 1 === parseInt(month);
-    });
+    // Use robust string comparison to avoid timezone issues with Date objects
+    // selectedMonth is "YYYY-MM" (e.g. "2025-12")
+    // t.date is "YYYY-MM-DD" (e.g. "2025-12-25")
+    return transactions.filter(t => t.date.startsWith(selectedMonth));
 }
 
 // ===== Monthly Insights =====
