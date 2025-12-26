@@ -98,6 +98,7 @@ function setupEventListeners() {
     });
 
     // Unified Event Delegation (Bulletproof Strategy)
+    // Unified Event Delegation (Bulletproof Strategy)
     document.addEventListener('click', (e) => {
         // Handle Recent Transactions Filter Buttons Only
         const filterBtn = e.target.closest('.filter-chip');
@@ -109,7 +110,7 @@ function setupEventListeners() {
             filterBtn.classList.add('active');
 
             // 🔑 IMPORTANT: update the SAME filter variable used by transaction list
-            splitFilter = filterBtn.dataset.splitFilter; // 'all', 'personal', 'splitwise'
+            splitFilter = filterBtn.dataset.status; // 'all', 'personal', 'splitwise'
 
             console.log('Recent Transactions filter:', splitFilter);
 
