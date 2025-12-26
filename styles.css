@@ -136,7 +136,13 @@ body::before {
             rgba(139, 0, 0, 0.15) 70%,
             rgba(50, 0, 0, 0.4) 100%);
     pointer-events: none;
-    z-index: 9998;
+    z-index: 10;
+}
+
+/* App Container - Sit above background */
+.app-container {
+    position: relative;
+    z-index: 100;
 }
 
 /* Thunder/Lightning flash effect */
@@ -2876,11 +2882,12 @@ body.light-theme .theme-icon::after {
         flex: 1 1 40%;
     }
 }
+
 /* Global Active State for Tactile Feedback */
-button:active, 
-.filter-chip:active, 
-.status-btn:active, 
-.action-btn:active, 
+button:active,
+.filter-chip:active,
+.status-btn:active,
+.action-btn:active,
 .toggle-btn:active {
     transform: scale(0.95) !important;
     filter: brightness(0.9);
