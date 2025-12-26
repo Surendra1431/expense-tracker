@@ -71,6 +71,15 @@ function setDefaultDate() {
 function setupEventListeners() {
     statusContainer = document.getElementById('split-status-container');
 
+    // Force default state on init to "personal"
+    if (statusContainer) {
+        statusContainer.dataset.status = 'personal';
+        statusContainer.querySelectorAll('.status-btn').forEach(btn => {
+            if (btn.dataset.status === 'personal') btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+    }
+
     transactionForm.addEventListener('submit', handleFormSubmit);
     clearAllBtn.addEventListener('click', clearAllTransactions);
 
