@@ -1031,7 +1031,7 @@ body::after {
 .app-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 40px 24px;
+    padding: 20px 24px;
     position: relative;
     z-index: 1;
 }
@@ -1039,7 +1039,7 @@ body::after {
 /* ===== Header ===== */
 .header {
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 20px;
     animation: fadeInDown 0.6s ease;
 }
 
