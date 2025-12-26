@@ -1632,30 +1632,30 @@ handleFormSubmit = function (e) {
 
 // ===== Month Filter Functionality =====
 function setupMonthFilter() {
-    const monthFilter = document.getElementById('month-filter');
+    const monthSelect = document.getElementById('month-select');
+    const yearSelect = document.getElementById('year-select');
+    const applyBtn = document.getElementById('apply-month-filter');
     const clearBtn = document.getElementById('clear-month-filter');
 
-    if (!monthFilter || !clearBtn) return;
+    if (!monthSelect || !yearSelect || !applyBtn || !clearBtn) return;
 
     // Set default to current month
     const now = new Date();
-    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    monthFilter.value = currentMonth;
-    selectedMonth = currentMonth;
+    monthSelect.value = now.getMonth() + 1;
+    yearSelect.value = now.getFullYear();
+    selectedMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-    monthFilter.addEventListener('change', (e) => {
-        selectedMonth = e.target.value || null;
+    applyBtn.addEventListener('click', () => {
+        const month = monthSelect.value;
+        const year = yearSelect.value;
+        selectedMonth = `${year}-${String(month).padStart(2, '0')}`;
         updateUI();
-        if (selectedMonth) {
-            const [year, month] = selectedMonth.split('-');
-            const monthName = new Date(year, month - 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-            showNotification(`Showing ${monthName} 📅`, 'info');
-        }
+        const monthName = new Date(year, month - 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        showNotification(`Showing ${monthName} 📅`, 'info');
     });
 
     clearBtn.addEventListener('click', () => {
         selectedMonth = null;
-        monthFilter.value = '';
         updateUI();
         showNotification('Showing all transactions 📋', 'info');
     });

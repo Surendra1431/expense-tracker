@@ -337,7 +337,7 @@ body::after {
     gap: 8px;
 }
 
-.month-selector input[type="month"] {
+.month-selector select {
     padding: 12px 20px;
     border-radius: var(--radius-md);
     border: 2px solid rgba(102, 126, 234, 0.3);
@@ -347,18 +347,46 @@ body::after {
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
-    min-width: 180px;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 35px;
 }
 
-.month-selector input[type="month"]:hover {
+.month-selector select:hover {
     border-color: rgba(102, 126, 234, 0.6);
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+    background-color: rgba(102, 126, 234, 0.15);
 }
 
-.month-selector input[type="month"]:focus {
+.month-selector select:focus {
     outline: none;
     border-color: var(--accent-primary);
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.month-selector select option {
+    background: #1a1a2e;
+    color: white;
+    padding: 10px;
+}
+
+.apply-filter-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border: none;
+    border-radius: var(--radius-md);
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+}
+
+.apply-filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 .clear-filter-btn {
