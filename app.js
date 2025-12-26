@@ -69,16 +69,7 @@ function setDefaultDate() {
 
 // Setup event listeners
 function setupEventListeners() {
-    statusContainer = document.getElementById('split-status-container');
-
-    // Force default state on init to "personal"
-    if (statusContainer) {
-        statusContainer.dataset.status = 'personal';
-        statusContainer.querySelectorAll('.status-btn').forEach(btn => {
-            if (btn.dataset.status === 'personal') btn.classList.add('active');
-            else btn.classList.remove('active');
-        });
-    }
+    // Split Status: Native radio buttons handle state now (No JS init needed)
 
     transactionForm.addEventListener('submit', handleFormSubmit);
     clearAllBtn.addEventListener('click', clearAllTransactions);
@@ -108,22 +99,7 @@ function setupEventListeners() {
 
     // Unified Event Delegation (Bulletproof Strategy)
     document.addEventListener('click', (e) => {
-        // 1. Handle Split Status Buttons (Add Transaction Form)
-        const statusBtn = e.target.closest('.status-btn');
-        if (statusBtn) {
-            e.preventDefault();
-            const container = document.getElementById('split-status-container');
-            if (container && container.contains(statusBtn)) {
-                container.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
-                statusBtn.classList.add('active');
-                container.dataset.status = statusBtn.dataset.status;
-                console.log('Form Split Status changed:', container.dataset.status);
-            }
-            return;
-        }
-
-        // 2. Handle Recent Transactions Filter Buttons (User Request)
-        // logic: Update UI state -> update filter variable -> refresh list
+        // Handle Recent Transactions Filter Buttons Only
         const filterBtn = e.target.closest('.filter-chip');
         if (filterBtn) {
             e.preventDefault();
@@ -292,7 +268,9 @@ function handleFormSubmit(e) {
     const date = dateInput.value;
 
     // Explicitly find the selected split status from the new button container
-    const splitStatus = statusContainer ? statusContainer.dataset.status : 'personal';
+    // Read Split Status from Radio Buttons
+    const splitStatusInput = document.querySelector('input[name="splitStatus"]:checked');
+    const splitStatus = splitStatusInput ? splitStatusInput.value : 'personal';
 
     console.log('Saving split status:', splitStatus);
 
@@ -320,13 +298,9 @@ function handleFormSubmit(e) {
     setDefaultDate();
     document.getElementById('type-income').checked = true;
 
-    // Reset Split Status UI
-    if (statusContainer) {
-        statusContainer.dataset.status = 'personal';
-        statusContainer.querySelectorAll('.status-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.status === 'personal');
-        });
-    }
+    // Reset Split Status UI (Native Radio)
+    const personalRadio = document.getElementById('status-personal');
+    if (personalRadio) personalRadio.checked = true;
 
     updateCategoryOptions(); // Ensure UI hides split toggle for new 'income' default
 

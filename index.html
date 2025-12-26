@@ -164,16 +164,25 @@
                     <!-- Expense Tracking Selector (Personal vs Splitwise Status) -->
                     <div class="form-group">
                         <label>Split Status</label>
-                        <div class="splitwise-toggle-group triple" id="split-status-container" data-status="personal">
-                            <button type="button" class="status-btn active" data-status="personal">
+                        <!-- Split Status (Native Radio Pattern) -->
+                        <div class="splitwise-toggle-group triple">
+                            <!-- Personal -->
+                            <input type="radio" id="status-personal" name="splitStatus" value="personal" checked>
+                            <label for="status-personal" class="status-btn">
                                 <span>Personal</span>
-                            </button>
-                            <button type="button" class="status-btn" data-status="split-pending">
+                            </label>
+
+                            <!-- To Split -->
+                            <input type="radio" id="status-pending" name="splitStatus" value="split-pending">
+                            <label for="status-pending" class="status-btn">
                                 <span>To Split</span>
-                            </button>
-                            <button type="button" class="status-btn" data-status="split-added">
+                            </label>
+
+                            <!-- Added -->
+                            <input type="radio" id="status-added" name="splitStatus" value="split-added">
+                            <label for="status-added" class="status-btn">
                                 <span>Added</span>
-                            </button>
+                            </label>
                         </div>
                     </div>
 

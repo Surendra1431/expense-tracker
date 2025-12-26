@@ -1361,6 +1361,15 @@ body::after {
     backdrop-filter: blur(10px);
 }
 
+/* Hide the radio inputs but keep them accessible */
+.splitwise-toggle-group input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+}
+
 .status-btn {
     padding: 12px 10px;
     background: rgba(255, 255, 255, 0.03);
@@ -1385,8 +1394,9 @@ body::after {
     border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Premium Gradient Active States */
-.status-btn.active[data-status="personal"] {
+/* Premium Gradient Active States - TRIGGERED BY RADIO CHECK */
+/* Personal */
+input[type="radio"]:checked+.status-btn[for="status-personal"] {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-color: transparent;
     color: white;
@@ -1394,7 +1404,8 @@ body::after {
     transform: translateY(-2px);
 }
 
-.status-btn.active[data-status="split-pending"] {
+/* To Split */
+input[type="radio"]:checked+.status-btn[for="status-pending"] {
     background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
     border-color: transparent;
     color: white;
@@ -1402,7 +1413,8 @@ body::after {
     transform: translateY(-2px);
 }
 
-.status-btn.active[data-status="split-added"] {
+/* Added */
+input[type="radio"]:checked+.status-btn[for="status-added"] {
     background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
     border-color: transparent;
     color: white;
