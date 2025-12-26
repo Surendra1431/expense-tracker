@@ -390,6 +390,15 @@ body::after {
     z-index: 1;
 }
 
+/* Wavy pattern - odd items touch the bar, even items hang lower */
+.light-item:nth-child(odd) {
+    transform: translateY(0);
+}
+
+.light-item:nth-child(even) {
+    transform: translateY(12px);
+}
+
 /* The bulb - on TOP */
 .bulb {
     width: 14px;
