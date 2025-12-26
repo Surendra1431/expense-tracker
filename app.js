@@ -97,6 +97,21 @@ function setupEventListeners() {
 
     // Note: Filter buttons now use onclick="setFilter(...)" in HTML for 100% reliability
 
+    // 🛡️ SAFEQUARD: Manually handle Split Status label clicks to ensure radio updates
+    // This fixes issues where native label->input clicks might be intercepted
+    document.querySelectorAll('.status-btn').forEach(label => {
+        label.addEventListener('click', (e) => {
+            // Find the associated radio
+            const radioId = label.getAttribute('for');
+            const radio = document.getElementById(radioId);
+            if (radio) {
+                // Force check
+                radio.checked = true;
+                console.log('🔘 Status manually set to:', radio.value);
+            }
+        });
+    });
+
     transactionForm.addEventListener('submit', handleFormSubmit);
     clearAllBtn.addEventListener('click', clearAllTransactions);
 
