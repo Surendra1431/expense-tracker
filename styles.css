@@ -312,6 +312,57 @@ body::after {
         0 0 40px #ff0000;
 }
 
+/* ===== Month Selector ===== */
+.month-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    flex-wrap: wrap;
+}
+
+.month-selector label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.month-selector input[type="month"] {
+    padding: 10px 15px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.month-selector input[type="month"]:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+.clear-filter-btn {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--income-color), #059669);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.clear-filter-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
 /* Small spores - rising up */
 .particle:nth-child(odd) {
     width: 8px;

@@ -45,6 +45,7 @@ const expenseColors = [
 ];
 // Budget configuration
 let monthlyBudget = 1000;
+let selectedMonth = null; // For month filtering
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
@@ -56,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUI();
     setupEventListeners();
     setupNewFeatures();
+    setupMonthFilter();
 });
 
 // Set default date to today
@@ -302,11 +304,13 @@ function updateUI() {
 
 // Update summary cards
 function updateSummary() {
-    const income = transactions
+    const filteredTx = getFilteredTransactions();
+
+    const income = filteredTx
         .filter(t => t.type === 'income')
         .reduce((sum, t) => sum + t.amount, 0);
 
-    const expense = transactions
+    const expense = filteredTx
         .filter(t => t.type === 'expense')
         .reduce((sum, t) => sum + t.amount, 0);
 
@@ -335,17 +339,22 @@ function animateValue(element, value, showSign = false) {
 
 // Update transactions list
 function updateTransactionsList() {
-    if (transactions.length === 0) {
+    const filteredTx = getFilteredTransactions();
+
+    if (filteredTx.length === 0) {
+        const message = selectedMonth
+            ? 'No transactions for this month 📅'
+            : 'No transactions yet. Start by adding one above!';
         transactionsList.innerHTML = `
             <p class="empty-state" id="empty-state">
                 <span class="empty-icon">📝</span>
-                <span>No transactions yet. Start by adding one above!</span>
+                <span>${message}</span>
             </p>
         `;
         return;
     }
 
-    const html = transactions.map(transaction => {
+    const html = filteredTx.map(transaction => {
         const emoji = transaction.category.split(' ')[0] || '💰';
         const sign = transaction.type === 'income' ? '+' : '-';
         const formattedDate = new Date(transaction.date).toLocaleDateString('en-US', {
@@ -1619,3 +1628,49 @@ handleFormSubmit = function (e) {
         'success'
     );
 };
+
+// ===== Month Filter Functionality =====
+function setupMonthFilter() {
+    const monthFilter = document.getElementById('month-filter');
+    const clearBtn = document.getElementById('clear-month-filter');
+
+    if (!monthFilter || !clearBtn) return;
+
+    // Set default to current month
+    const now = new Date();
+    const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    monthFilter.value = currentMonth;
+    selectedMonth = currentMonth;
+
+    monthFilter.addEventListener('change', (e) => {
+        selectedMonth = e.target.value || null;
+        updateUI();
+        if (selectedMonth) {
+            const [year, month] = selectedMonth.split('-');
+            const monthName = new Date(year, month - 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            showNotification(`Showing ${monthName} 📅`, 'info');
+        }
+    });
+
+    clearBtn.addEventListener('click', () => {
+        selectedMonth = null;
+        monthFilter.value = '';
+        updateUI();
+        showNotification('Showing all transactions 📋', 'info');
+    });
+
+    // Apply initial filter
+    updateUI();
+}
+
+// Get filtered transactions based on selected month
+function getFilteredTransactions() {
+    if (!selectedMonth) return transactions;
+
+    const [year, month] = selectedMonth.split('-');
+    return transactions.filter(t => {
+        const tDate = new Date(t.date);
+        return tDate.getFullYear() === parseInt(year) &&
+            tDate.getMonth() + 1 === parseInt(month);
+    });
+}
