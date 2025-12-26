@@ -577,11 +577,6 @@ body::after {
     animation-delay: 1.7s;
 }
 
-/* Add padding to body for fixed header */
-body {
-    padding-top: 100px;
-}
-
 .light-string {
     display: flex;
     justify-content: center;
