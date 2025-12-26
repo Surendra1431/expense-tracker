@@ -120,25 +120,27 @@ function setupEventListeners() {
         });
     });
 
-    // Reinforce Split Status Toggles (High Reliability)
-    if (statusContainer) {
-        statusContainer.querySelectorAll('.status-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault(); // Just in case it tries to submit
-                e.stopPropagation(); // Stop bubbling
+    // Event Delegation for Split Status (Bulletproof Strategy)
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.status-btn');
+        if (!btn) return;
 
-                // Remove active from all
-                statusContainer.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+        // Prevent default button behavior
+        e.preventDefault();
 
-                // Add active to clicked
-                btn.classList.add('active');
+        const container = document.getElementById('split-status-container');
+        if (container && container.contains(btn)) {
+            // Remove active from all siblings
+            container.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
 
-                // Store in container
-                statusContainer.dataset.status = btn.dataset.status;
-                console.log('Split status updated to:', statusContainer.dataset.status);
-            });
-        });
-    }
+            // Add active to clicked button
+            btn.classList.add('active');
+
+            // Update container state
+            container.dataset.status = btn.dataset.status;
+            console.log('Status changed (Delegated):', container.dataset.status);
+        }
+    });
 
     // Initialize with default (income)
     updateCategoryOptions();
