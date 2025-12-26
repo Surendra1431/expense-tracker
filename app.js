@@ -711,6 +711,38 @@ function loadGitHubConfig() {
     }
 }
 
+// Check URL for auto-setup parameters
+function checkAutoSetup() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const setupToken = urlParams.get('token');
+    const setupGistId = urlParams.get('gist');
+
+    if (setupToken && setupGistId) {
+        githubConfig.token = setupToken;
+        githubConfig.gistId = setupGistId;
+        saveGitHubConfig();
+
+        // Remove params from URL (for security - don't leave token in URL)
+        const cleanUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+
+        // Sync immediately
+        setTimeout(async () => {
+            try {
+                await loadFromGist();
+                updateSyncUI();
+                showNotification('Cloud sync activated! ☁️✅', 'success');
+            } catch (error) {
+                console.error('Auto-setup sync error:', error);
+                showNotification('Connected! Sync will start when you add data. ☁️', 'info');
+            }
+        }, 500);
+
+        return true;
+    }
+    return false;
+}
+
 // Save GitHub config to localStorage
 function saveGitHubConfig() {
     localStorage.setItem('finance-tracker-github-config', JSON.stringify(githubConfig));
@@ -975,5 +1007,9 @@ saveTransactions = function () {
 // Initialize GitHub sync when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     // Give a small delay to ensure main app is initialized
-    setTimeout(initGitHubSync, 100);
+    setTimeout(() => {
+        // Check for auto-setup URL parameters first
+        checkAutoSetup();
+        initGitHubSync();
+    }, 100);
 });
