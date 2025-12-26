@@ -305,6 +305,20 @@ function handleFormSubmit(e) {
 
     updateCategoryOptions(); // Ensure UI hides split toggle for new 'income' default
 
+    // Auto-switch filter to show the new item (User Requested Feature)
+    if (splitStatus !== 'personal') {
+        // If "To Split" or "Added", switch to that tab so user sees it immediately
+        window.setFilter(splitStatus);
+    } else {
+        // If "Personal", switch to Personal tab if we're currently hiding it
+        if (splitFilter !== 'all' && splitFilter !== 'personal') {
+            window.setFilter('personal');
+        } else {
+            // Otherwise just refresh the current view
+            updateUI();
+        }
+    }
+
     showNotification(
         type === 'income'
             ? `Income added: +$${amount.toFixed(2)} 💰`
