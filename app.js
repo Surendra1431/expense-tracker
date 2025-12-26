@@ -110,7 +110,8 @@ function setupEventListeners() {
             filterBtn.classList.add('active');
 
             // 🔑 IMPORTANT: update the SAME filter variable used by transaction list
-            splitFilter = filterBtn.dataset.status; // 'all', 'personal', 'splitwise'
+            const newStatus = filterBtn.getAttribute('data-status');
+            splitFilter = newStatus;
 
             console.log('Recent Transactions filter:', splitFilter);
 
