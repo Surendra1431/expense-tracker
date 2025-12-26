@@ -22,7 +22,7 @@ const totalExpenseEl = document.getElementById('total-expense');
 const netBalanceEl = document.getElementById('net-balance');
 const clearAllBtn = document.getElementById('clear-all');
 const emojiGrid = document.getElementById('emoji-grid');
-const statusContainer = document.getElementById('split-status-container');
+let statusContainer = null; // Will be initialized in setupEventListeners
 
 // Chart color palettes
 const incomeColors = [
@@ -69,6 +69,8 @@ function setDefaultDate() {
 
 // Setup event listeners
 function setupEventListeners() {
+    statusContainer = document.getElementById('split-status-container');
+
     transactionForm.addEventListener('submit', handleFormSubmit);
     clearAllBtn.addEventListener('click', clearAllTransactions);
 
@@ -112,11 +114,16 @@ function setupEventListeners() {
     // Reinforce Split Status Toggles (High Reliability)
     if (statusContainer) {
         statusContainer.querySelectorAll('.status-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault(); // Just in case it tries to submit
+                e.stopPropagation(); // Stop bubbling
+
                 // Remove active from all
                 statusContainer.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+
                 // Add active to clicked
                 btn.classList.add('active');
+
                 // Store in container
                 statusContainer.dataset.status = btn.dataset.status;
                 console.log('Split status updated to:', statusContainer.dataset.status);
@@ -158,9 +165,12 @@ function updateCategoryOptions() {
     const categories = selectedType === 'income' ? incomeCategories : expenseCategories;
 
     // Hide Split Status for Income since it's usually for shared expenses
-    const splitGroup = document.querySelector('.splitwise-toggle-group').closest('.form-group');
-    if (splitGroup) {
-        splitGroup.style.display = selectedType === 'income' ? 'none' : 'block';
+    const splitEl = document.querySelector('.splitwise-toggle-group');
+    if (splitEl) {
+        const splitGroup = splitEl.closest('.form-group');
+        if (splitGroup) {
+            splitGroup.style.display = selectedType === 'income' ? 'none' : 'block';
+        }
     }
 
     // Clear and rebuild dropdown
