@@ -22,6 +22,7 @@ const totalExpenseEl = document.getElementById('total-expense');
 const netBalanceEl = document.getElementById('net-balance');
 const clearAllBtn = document.getElementById('clear-all');
 const emojiGrid = document.getElementById('emoji-grid');
+const statusContainer = document.getElementById('split-status-container');
 
 // Chart color palettes
 const incomeColors = [
@@ -104,20 +105,24 @@ function setupEventListeners() {
             updateUI();
 
             const monthName = selectedMonth ? new Date(selectedMonth + '-01').toLocaleDateString('en-US', { month: 'long' }) : 'All Time';
-            showNotification(`Filtering ${splitFilter} for ${monthName} 🔍`, 'info');
+            showNotification(`Filtering ${splitFilter} for ${monthName}`, 'info');
         });
     });
 
-    // Ensure split toggles check the hidden radio buttons correctly
-    document.querySelectorAll('.split-toggle').forEach(label => {
-        label.addEventListener('click', (e) => {
-            const radio = document.getElementById(label.getAttribute('for'));
-            if (radio) {
-                radio.checked = true;
-                // Trigger a re-render of current UI if needed, but here we just need the value for form submission
-            }
+    // Reinforce Split Status Toggles (High Reliability)
+    if (statusContainer) {
+        statusContainer.querySelectorAll('.status-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active from all
+                statusContainer.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+                // Add active to clicked
+                btn.classList.add('active');
+                // Store in container
+                statusContainer.dataset.status = btn.dataset.status;
+                console.log('Split status updated to:', statusContainer.dataset.status);
+            });
         });
-    });
+    }
 
     // Initialize with default (income)
     updateCategoryOptions();
@@ -261,11 +266,10 @@ function handleFormSubmit(e) {
     const amount = parseFloat(amountInput.value);
     const date = dateInput.value;
 
-    // Explicitly find the selected split status
-    const selectedSplitRadio = document.querySelector('input[name="split-type"]:checked');
-    const splitStatus = selectedSplitRadio ? selectedSplitRadio.value : 'personal';
+    // Explicitly find the selected split status from the new button container
+    const splitStatus = statusContainer ? statusContainer.dataset.status : 'personal';
 
-    console.log('Adding transaction:', { description, amount, splitStatus });
+    console.log('Saving split status:', splitStatus);
 
     if (!description || !category || !amount || !date) {
         showNotification('Please fill in all fields! 📝', 'error');
@@ -290,8 +294,15 @@ function handleFormSubmit(e) {
     transactionForm.reset();
     setDefaultDate();
     document.getElementById('type-income').checked = true;
-    const personalRadio = document.getElementById('status-personal');
-    if (personalRadio) personalRadio.checked = true;
+
+    // Reset Split Status UI
+    if (statusContainer) {
+        statusContainer.dataset.status = 'personal';
+        statusContainer.querySelectorAll('.status-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.status === 'personal');
+        });
+    }
+
     updateCategoryOptions(); // Ensure UI hides split toggle for new 'income' default
 
     showNotification(

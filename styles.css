@@ -1355,20 +1355,7 @@ body::after {
     backdrop-filter: blur(10px);
 }
 
-.split-toggle {
-    position: relative;
-    cursor: pointer;
-}
-
-.split-toggle input {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-    pointer-events: none;
-}
-
-.toggle-box {
+.status-btn {
     padding: 12px 10px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -1383,10 +1370,17 @@ body::after {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.status-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Premium Gradient Active States */
-.split-toggle input:checked+.toggle-box.personal {
+.status-btn.active[data-status="personal"] {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-color: transparent;
     color: white;
@@ -1394,7 +1388,7 @@ body::after {
     transform: translateY(-2px);
 }
 
-.split-toggle input:checked+.toggle-box.pending {
+.status-btn.active[data-status="split-pending"] {
     background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
     border-color: transparent;
     color: white;
@@ -1402,17 +1396,12 @@ body::after {
     transform: translateY(-2px);
 }
 
-.split-toggle input:checked+.toggle-box.added {
+.status-btn.active[data-status="split-added"] {
     background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
     border-color: transparent;
     color: white;
     box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4);
     transform: translateY(-2px);
-}
-
-.split-toggle:hover .toggle-box {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* List Badges */
