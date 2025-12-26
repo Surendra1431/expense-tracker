@@ -139,6 +139,70 @@ body::before {
     z-index: 9998;
 }
 
+/* Thunder/Lightning flash effect */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 50, 50, 0);
+    pointer-events: none;
+    z-index: 9997;
+    animation: thunder 8s infinite;
+}
+
+@keyframes thunder {
+
+    0%,
+    100% {
+        background: rgba(255, 50, 50, 0);
+    }
+
+    /* First flash */
+    20% {
+        background: rgba(255, 50, 50, 0);
+    }
+
+    20.5% {
+        background: rgba(255, 100, 100, 0.15);
+    }
+
+    21% {
+        background: rgba(255, 50, 50, 0);
+    }
+
+    21.5% {
+        background: rgba(255, 150, 100, 0.2);
+    }
+
+    22% {
+        background: rgba(255, 50, 50, 0);
+    }
+
+    /* Second flash */
+    60% {
+        background: rgba(255, 50, 50, 0);
+    }
+
+    60.3% {
+        background: rgba(255, 80, 80, 0.1);
+    }
+
+    60.6% {
+        background: rgba(255, 50, 50, 0);
+    }
+
+    61% {
+        background: rgba(255, 120, 100, 0.18);
+    }
+
+    61.5% {
+        background: rgba(255, 50, 50, 0);
+    }
+}
+
 /* Particles container */
 .particles {
     position: fixed;
@@ -163,36 +227,34 @@ body::before {
         0 0 40px #ff0000;
 }
 
-/* Small spores - still visible */
+/* Small spores - rising up */
 .particle:nth-child(odd) {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     animation: floatUp 18s linear infinite;
 }
 
-/* Medium ash pieces */
+/* Smaller falling ash */
 .particle:nth-child(even) {
-    width: 15px;
-    height: 15px;
+    width: 5px;
+    height: 5px;
     animation: floatDown 20s linear infinite;
     background: #ff3333;
     box-shadow:
-        0 0 10px #ff3333,
-        0 0 20px #cc1111,
-        0 0 30px #aa0000;
+        0 0 6px #ff3333,
+        0 0 12px #cc1111;
 }
 
-/* Large drifting pieces */
+/* Medium drifting pieces */
 .particle:nth-child(3n) {
-    width: 20px;
-    height: 20px;
+    width: 10px;
+    height: 10px;
     animation: drift 25s ease-in-out infinite;
-    opacity: 0.8;
+    opacity: 0.7;
     background: #ff5555;
     box-shadow:
-        0 0 15px #ff5555,
-        0 0 30px #ff3333,
-        0 0 50px #cc0000;
+        0 0 10px #ff5555,
+        0 0 20px #ff3333;
 }
 
 .particle:nth-child(1) {
