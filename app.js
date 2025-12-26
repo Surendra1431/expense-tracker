@@ -108,6 +108,17 @@ function setupEventListeners() {
         });
     });
 
+    // Ensure split toggles check the hidden radio buttons correctly
+    document.querySelectorAll('.split-toggle').forEach(label => {
+        label.addEventListener('click', (e) => {
+            const radio = document.getElementById(label.getAttribute('for'));
+            if (radio) {
+                radio.checked = true;
+                // Trigger a re-render of current UI if needed, but here we just need the value for form submission
+            }
+        });
+    });
+
     // Initialize with default (income)
     updateCategoryOptions();
 }
@@ -140,6 +151,12 @@ const expenseCategories = [
 function updateCategoryOptions() {
     const selectedType = document.querySelector('input[name="type"]:checked').value;
     const categories = selectedType === 'income' ? incomeCategories : expenseCategories;
+
+    // Hide Split Status for Income since it's usually for shared expenses
+    const splitGroup = document.querySelector('.splitwise-toggle-group').closest('.form-group');
+    if (splitGroup) {
+        splitGroup.style.display = selectedType === 'income' ? 'none' : 'block';
+    }
 
     // Clear and rebuild dropdown
     categorySelect.innerHTML = '<option value="">Select a category...</option>';
@@ -244,7 +261,11 @@ function handleFormSubmit(e) {
     const amount = parseFloat(amountInput.value);
     const date = dateInput.value;
 
-    const splitStatus = document.querySelector('input[name="split-type"]:checked').value;
+    // Explicitly find the selected split status
+    const selectedSplitRadio = document.querySelector('input[name="split-type"]:checked');
+    const splitStatus = selectedSplitRadio ? selectedSplitRadio.value : 'personal';
+
+    console.log('Adding transaction:', { description, amount, splitStatus });
 
     if (!description || !category || !amount || !date) {
         showNotification('Please fill in all fields! 📝', 'error');
@@ -269,8 +290,9 @@ function handleFormSubmit(e) {
     transactionForm.reset();
     setDefaultDate();
     document.getElementById('type-income').checked = true;
-    const personalRadio = document.querySelector('input[name="split-type"][value="personal"]');
+    const personalRadio = document.getElementById('status-personal');
     if (personalRadio) personalRadio.checked = true;
+    updateCategoryOptions(); // Ensure UI hides split toggle for new 'income' default
 
     showNotification(
         type === 'income'
