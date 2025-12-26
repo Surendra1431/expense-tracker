@@ -106,9 +106,9 @@ function setupEventListeners() {
         radio.addEventListener('change', updateCategoryOptions);
     });
 
-    // Unified Event Delegation for App Buttons (Bulletproof Strategy)
+    // Unified Event Delegation (Bulletproof Strategy)
     document.addEventListener('click', (e) => {
-        // 1. Handle Split Status Buttons (Add Transaction)
+        // 1. Handle Split Status Buttons (Add Transaction Form)
         const statusBtn = e.target.closest('.status-btn');
         if (statusBtn) {
             e.preventDefault();
@@ -117,28 +117,32 @@ function setupEventListeners() {
                 container.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
                 statusBtn.classList.add('active');
                 container.dataset.status = statusBtn.dataset.status;
-                console.log('Split Status changed:', container.dataset.status);
+                console.log('Form Split Status changed:', container.dataset.status);
             }
             return;
         }
 
-        // 2. Handle Filter Chips (View Transactions)
-        const filterChip = e.target.closest('.filter-chip');
-        if (filterChip) {
+        // 2. Handle Recent Transactions Filter Buttons (User Request)
+        // logic: Update UI state -> update filter variable -> refresh list
+        const filterBtn = e.target.closest('.filter-chip');
+        if (filterBtn) {
             e.preventDefault();
-            console.log('Filter clicked:', filterChip.dataset.splitFilter);
 
-            // Visual Update
-            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-            filterChip.classList.add('active');
+            // Update active UI state
+            document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+            filterBtn.classList.add('active');
 
-            // Logic Update
-            splitFilter = filterChip.dataset.splitFilter;
-            updateUI(); // This triggers the re-render of the list
+            // 🔑 IMPORTANT: update the SAME filter variable used by transaction list
+            splitFilter = filterBtn.dataset.splitFilter; // 'all', 'personal', 'splitwise'
 
+            console.log('Recent Transactions filter:', splitFilter);
+
+            // 🔄 Re-render UI immediately
+            updateUI();
+
+            // Optional: Show feedback
             const monthName = selectedMonth ? new Date(selectedMonth + '-01').toLocaleDateString('en-US', { month: 'long' }) : 'All Time';
             showNotification(`Filtering ${splitFilter} for ${monthName}`, 'info');
-            return;
         }
     });
 
