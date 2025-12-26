@@ -691,3 +691,289 @@ function showNotification(message, type = 'info') {
 
 // Expose deleteTransaction to global scope for onclick
 window.deleteTransaction = deleteTransaction;
+
+// ===========================
+// GitHub Gist Sync Feature
+// ===========================
+
+// GitHub sync configuration
+let githubConfig = {
+    token: null,
+    gistId: null
+};
+
+// Load GitHub config from localStorage
+function loadGitHubConfig() {
+    const saved = localStorage.getItem('finance-tracker-github-config');
+    if (saved) {
+        githubConfig = JSON.parse(saved);
+        updateSyncUI();
+    }
+}
+
+// Save GitHub config to localStorage
+function saveGitHubConfig() {
+    localStorage.setItem('finance-tracker-github-config', JSON.stringify(githubConfig));
+}
+
+// Initialize GitHub sync UI
+function initGitHubSync() {
+    const syncBtn = document.getElementById('sync-btn');
+    const modal = document.getElementById('settings-modal');
+    const closeModal = document.getElementById('close-modal');
+    const saveSettingsBtn = document.getElementById('save-settings');
+    const disconnectBtn = document.getElementById('disconnect-github');
+    const tokenInput = document.getElementById('github-token');
+    const gistIdInput = document.getElementById('gist-id');
+    const gistIdGroup = document.getElementById('gist-id-group');
+
+    // Load saved config
+    loadGitHubConfig();
+
+    // Show modal
+    syncBtn.addEventListener('click', () => {
+        modal.classList.add('show');
+        if (githubConfig.token) {
+            tokenInput.value = githubConfig.token;
+            gistIdGroup.style.display = 'block';
+            if (githubConfig.gistId) {
+                gistIdInput.value = githubConfig.gistId;
+            }
+        }
+    });
+
+    // Close modal
+    closeModal.addEventListener('click', () => {
+        modal.classList.remove('show');
+    });
+
+    // Close on overlay click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('show');
+        }
+    });
+
+    // Token input change - show gist ID field
+    tokenInput.addEventListener('input', () => {
+        if (tokenInput.value.trim()) {
+            gistIdGroup.style.display = 'block';
+        } else {
+            gistIdGroup.style.display = 'none';
+        }
+    });
+
+    // Save settings and sync
+    saveSettingsBtn.addEventListener('click', async () => {
+        const token = tokenInput.value.trim();
+        if (!token) {
+            showNotification('Please enter a GitHub token! 🔑', 'error');
+            return;
+        }
+
+        githubConfig.token = token;
+        const inputGistId = gistIdInput.value.trim();
+
+        saveSettingsBtn.textContent = '⏳ Syncing...';
+        saveSettingsBtn.disabled = true;
+
+        try {
+            if (inputGistId) {
+                // Try to load from existing gist
+                githubConfig.gistId = inputGistId;
+                await loadFromGist();
+                showNotification('Connected and synced from existing Gist! ☁️', 'success');
+            } else if (githubConfig.gistId) {
+                // Update existing gist
+                await saveToGist();
+                showNotification('Synced to existing Gist! ☁️', 'success');
+            } else {
+                // Create new gist
+                await createGist();
+                showNotification('Created new Gist and synced! ☁️', 'success');
+            }
+
+            saveGitHubConfig();
+            updateSyncUI();
+            modal.classList.remove('show');
+
+        } catch (error) {
+            console.error('Sync error:', error);
+            showNotification('Sync failed! Check your token. ❌', 'error');
+        }
+
+        saveSettingsBtn.textContent = '💾 Save & Sync';
+        saveSettingsBtn.disabled = false;
+    });
+
+    // Disconnect
+    disconnectBtn.addEventListener('click', () => {
+        if (confirm('Disconnect from GitHub? Your local data will be kept.')) {
+            githubConfig = { token: null, gistId: null };
+            saveGitHubConfig();
+            tokenInput.value = '';
+            gistIdInput.value = '';
+            gistIdGroup.style.display = 'none';
+            updateSyncUI();
+            showNotification('Disconnected from GitHub! 🔌', 'info');
+        }
+    });
+
+    // Auto-sync on page load if connected
+    if (githubConfig.token && githubConfig.gistId) {
+        setTimeout(async () => {
+            try {
+                await loadFromGist();
+                showNotification('Data synced from cloud! ☁️', 'success');
+            } catch (error) {
+                console.error('Auto-sync error:', error);
+            }
+        }, 1000);
+    }
+}
+
+// Update sync UI based on connection status
+function updateSyncUI() {
+    const indicator = document.getElementById('sync-indicator');
+    const statusDiv = document.getElementById('sync-status');
+    const currentGistDiv = document.getElementById('current-gist');
+    const displayGistId = document.getElementById('display-gist-id');
+
+    if (githubConfig.token && githubConfig.gistId) {
+        indicator.classList.add('connected');
+        indicator.classList.remove('syncing');
+        statusDiv.innerHTML = '<span class="status-dot online"></span><span>Connected to GitHub</span>';
+        currentGistDiv.style.display = 'block';
+        displayGistId.textContent = githubConfig.gistId;
+    } else {
+        indicator.classList.remove('connected');
+        statusDiv.innerHTML = '<span class="status-dot offline"></span><span>Not connected</span>';
+        currentGistDiv.style.display = 'none';
+    }
+}
+
+// Create a new GitHub Gist
+async function createGist() {
+    const response = await fetch('https://api.github.com/gists', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${githubConfig.token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+        },
+        body: JSON.stringify({
+            description: '💰 Finance Tracker Data - Auto-synced',
+            public: false,
+            files: {
+                'finance-tracker-data.json': {
+                    content: JSON.stringify({
+                        lastSync: new Date().toISOString(),
+                        transactions: transactions
+                    }, null, 2)
+                }
+            }
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to create gist');
+    }
+
+    const data = await response.json();
+    githubConfig.gistId = data.id;
+}
+
+// Save to existing GitHub Gist
+async function saveToGist() {
+    if (!githubConfig.gistId) {
+        await createGist();
+        return;
+    }
+
+    const indicator = document.getElementById('sync-indicator');
+    indicator.classList.add('syncing');
+
+    const response = await fetch(`https://api.github.com/gists/${githubConfig.gistId}`, {
+        method: 'PATCH',
+        headers: {
+            'Authorization': `Bearer ${githubConfig.token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+        },
+        body: JSON.stringify({
+            files: {
+                'finance-tracker-data.json': {
+                    content: JSON.stringify({
+                        lastSync: new Date().toISOString(),
+                        transactions: transactions
+                    }, null, 2)
+                }
+            }
+        })
+    });
+
+    indicator.classList.remove('syncing');
+
+    if (!response.ok) {
+        throw new Error('Failed to save to gist');
+    }
+}
+
+// Load from GitHub Gist
+async function loadFromGist() {
+    if (!githubConfig.gistId) return;
+
+    const indicator = document.getElementById('sync-indicator');
+    indicator.classList.add('syncing');
+
+    const response = await fetch(`https://api.github.com/gists/${githubConfig.gistId}`, {
+        headers: {
+            'Authorization': `Bearer ${githubConfig.token}`,
+            'Accept': 'application/vnd.github.v3+json'
+        }
+    });
+
+    indicator.classList.remove('syncing');
+
+    if (!response.ok) {
+        throw new Error('Failed to load from gist');
+    }
+
+    const data = await response.json();
+    const fileContent = data.files['finance-tracker-data.json'];
+
+    if (fileContent && fileContent.content) {
+        const parsed = JSON.parse(fileContent.content);
+        if (parsed.transactions && Array.isArray(parsed.transactions)) {
+            transactions = parsed.transactions;
+            saveTransactions();
+            updateUI();
+        }
+    }
+}
+
+// Override saveTransactions to also sync to GitHub
+const originalSaveTransactions = saveTransactions;
+saveTransactions = function () {
+    originalSaveTransactions();
+
+    // Auto-sync to GitHub if connected
+    if (githubConfig.token && githubConfig.gistId) {
+        // Debounce: wait a bit before syncing to avoid too many API calls
+        clearTimeout(window.syncTimeout);
+        window.syncTimeout = setTimeout(async () => {
+            try {
+                await saveToGist();
+                console.log('Auto-synced to GitHub');
+            } catch (error) {
+                console.error('Auto-sync failed:', error);
+            }
+        }, 2000);
+    }
+};
+
+// Initialize GitHub sync when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    // Give a small delay to ensure main app is initialized
+    setTimeout(initGitHubSync, 100);
+});
