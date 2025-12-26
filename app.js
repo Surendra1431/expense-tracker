@@ -106,39 +106,39 @@ function setupEventListeners() {
         radio.addEventListener('change', updateCategoryOptions);
     });
 
-    // Splitwise filters
-    document.querySelectorAll('.filter-chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-            console.log('Filter clicked:', chip.dataset.splitFilter);
+    // Unified Event Delegation for App Buttons (Bulletproof Strategy)
+    document.addEventListener('click', (e) => {
+        // 1. Handle Split Status Buttons (Add Transaction)
+        const statusBtn = e.target.closest('.status-btn');
+        if (statusBtn) {
+            e.preventDefault();
+            const container = document.getElementById('split-status-container');
+            if (container && container.contains(statusBtn)) {
+                container.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+                statusBtn.classList.add('active');
+                container.dataset.status = statusBtn.dataset.status;
+                console.log('Split Status changed:', container.dataset.status);
+            }
+            return;
+        }
+
+        // 2. Handle Filter Chips (View Transactions)
+        const filterChip = e.target.closest('.filter-chip');
+        if (filterChip) {
+            e.preventDefault();
+            console.log('Filter clicked:', filterChip.dataset.splitFilter);
+
+            // Visual Update
             document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-            chip.classList.add('active');
-            splitFilter = chip.dataset.splitFilter;
-            updateUI();
+            filterChip.classList.add('active');
+
+            // Logic Update
+            splitFilter = filterChip.dataset.splitFilter;
+            updateUI(); // This triggers the re-render of the list
 
             const monthName = selectedMonth ? new Date(selectedMonth + '-01').toLocaleDateString('en-US', { month: 'long' }) : 'All Time';
             showNotification(`Filtering ${splitFilter} for ${monthName}`, 'info');
-        });
-    });
-
-    // Event Delegation for Split Status (Bulletproof Strategy)
-    document.addEventListener('click', (e) => {
-        const btn = e.target.closest('.status-btn');
-        if (!btn) return;
-
-        // Prevent default button behavior
-        e.preventDefault();
-
-        const container = document.getElementById('split-status-container');
-        if (container && container.contains(btn)) {
-            // Remove active from all siblings
-            container.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
-
-            // Add active to clicked button
-            btn.classList.add('active');
-
-            // Update container state
-            container.dataset.status = btn.dataset.status;
-            console.log('Status changed (Delegated):', container.dataset.status);
+            return;
         }
     });
 
