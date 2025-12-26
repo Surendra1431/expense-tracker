@@ -300,6 +300,7 @@ function updateUI() {
     updateSummary();
     updateTransactionsList();
     updateCharts();
+    updateInsights();
 }
 
 // Update summary cards
@@ -1673,4 +1674,71 @@ function getFilteredTransactions() {
         return tDate.getFullYear() === parseInt(year) &&
             tDate.getMonth() + 1 === parseInt(month);
     });
+}
+
+// ===== Monthly Insights =====
+function updateInsights() {
+    const filteredTx = getFilteredTransactions();
+
+    const income = filteredTx
+        .filter(t => t.type === 'income')
+        .reduce((sum, t) => sum + t.amount, 0);
+
+    const expenses = filteredTx
+        .filter(t => t.type === 'expense')
+        .reduce((sum, t) => sum + t.amount, 0);
+
+    const savings = income - expenses;
+    const savingsRate = income > 0 ? ((savings / income) * 100).toFixed(1) : 0;
+
+    // Find top expense category
+    const expenseByCategory = {};
+    filteredTx.filter(t => t.type === 'expense').forEach(t => {
+        const cat = t.category;
+        expenseByCategory[cat] = (expenseByCategory[cat] || 0) + t.amount;
+    });
+
+    let topCategory = 'N/A';
+    let topAmount = 0;
+    for (const [cat, amount] of Object.entries(expenseByCategory)) {
+        if (amount > topAmount) {
+            topAmount = amount;
+            topCategory = cat;
+        }
+    }
+
+    // Update DOM
+    const savingsEl = document.getElementById('monthly-savings');
+    const rateEl = document.getElementById('savings-rate');
+    const topCatEl = document.getElementById('top-expense-category');
+    const countEl = document.getElementById('transaction-count');
+    const tipEl = document.getElementById('savings-tip');
+
+    if (savingsEl) {
+        savingsEl.textContent = `$${savings.toFixed(2)}`;
+        savingsEl.style.color = savings >= 0 ? '#10b981' : '#ef4444';
+    }
+    if (rateEl) {
+        rateEl.textContent = `${savingsRate}%`;
+        rateEl.style.color = savingsRate >= 20 ? '#10b981' : savingsRate >= 0 ? '#fbbf24' : '#ef4444';
+    }
+    if (topCatEl) topCatEl.textContent = topCategory;
+    if (countEl) countEl.textContent = filteredTx.length;
+
+    // Smart tip
+    if (tipEl) {
+        if (filteredTx.length === 0) {
+            tipEl.textContent = '💡 Add your income and expenses to see insights!';
+        } else if (savings < 0) {
+            tipEl.textContent = `⚠️ You're spending more than you earn! Try to cut back on ${topCategory}`;
+        } else if (savingsRate >= 30) {
+            tipEl.textContent = `🎉 Excellent! You're saving ${savingsRate}% of your income!`;
+        } else if (savingsRate >= 20) {
+            tipEl.textContent = `👍 Good job! You're on track with ${savingsRate}% savings rate!`;
+        } else if (savingsRate >= 10) {
+            tipEl.textContent = `💪 Not bad! Try to increase your savings rate above 20%`;
+        } else {
+            tipEl.textContent = `💡 Tip: Aim to save at least 20% of your income for financial security`;
+        }
+    }
 }
