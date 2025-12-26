@@ -342,13 +342,66 @@ body::after {
         0 0 20px #ff3333;
 }
 
-/* ===== Joyce Byers Christmas Lights ===== */
-.christmas-lights {
-    padding: 20px 0;
-    margin-bottom: 20px;
-    position: relative;
-    overflow-x: auto;
-    overflow-y: visible;
+/* ===== Stranger Things Title Lights ===== */
+.stranger-things-lights {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: linear-gradient(180deg, rgba(10, 0, 0, 0.95) 0%, rgba(20, 0, 0, 0.8) 70%, transparent 100%);
+    padding: 15px 20px 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.st-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.stranger-things-lights .light {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: transform 0.3s;
+}
+
+/* Up and down wave effect */
+.stranger-things-lights .light.up {
+    transform: translateY(-8px);
+}
+
+.stranger-things-lights .light.down {
+    transform: translateY(8px);
+}
+
+/* The bulb */
+.stranger-things-lights .light::before {
+    content: '';
+    width: 16px;
+    height: 22px;
+    border-radius: 50% 50% 45% 45%;
+    animation: flicker-light 3s ease-in-out infinite;
+}
+
+/* Letter underneath */
+.stranger-things-lights .light span {
+    font-family: 'ITC Benguiat', 'Times New Roman', serif;
+    font-size: 20px;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 0 10px currentColor;
+    letter-spacing: 2px;
+}
+
+/* Add padding to body for fixed header */
+body {
+    padding-top: 100px;
 }
 
 .light-string {
